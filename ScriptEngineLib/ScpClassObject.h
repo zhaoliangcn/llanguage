@@ -3,6 +3,7 @@
 //email:zhaoliangcn@126.com
 //code descriptyon:
 //类对象及其成员变量、成员函数的管理
+//ScpClassObject用于描述用户自定义的类类型
 */
 #ifndef _H_SCPCLASSOBJECT
 #define _H_SCPCLASSOBJECT

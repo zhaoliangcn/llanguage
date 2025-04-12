@@ -34,10 +34,6 @@ ScpIntObject::ScpIntObject()
 	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
 	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
 
-
-	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
-	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
-
 	BindObjectInnerFuction(scpcommand_cuberoot_CN, InnerFunction_cuberoot);
 	BindObjectInnerFuction(scpcommand_cuberoot_EN, InnerFunction_cuberoot);
 
@@ -86,15 +82,7 @@ ScpObject * ScpIntObject::Clone(std::string strObjName)
 }	
 std::string ScpIntObject::ToString()
 {
-	std::string temp;
-	char Buffer[16]={0};
-#ifdef _WIN32
-	sprintf(Buffer,"%d",value);
-#else 
-	sprintf(Buffer,"%d",value);
-#endif
-	temp=Buffer;
-	return temp;
+	return std::to_string(value);
 }
 void ScpIntObject::Release() 
 {
@@ -319,10 +307,14 @@ ScpObject * ScpIntObject::InnerFunction_pow(ScpObject * thisObject, VTPARAMETERS
 			return nullptr;
 		}
 		ScpIntObject *tint = (ScpIntObject *)engine->GetCurrentObjectSpace()->AcquireTempObject(ObjInt);
-		const int ret = ((ScpIntObject *)thisObject)->value;
-		tint->value = pow(ret,c);
-		tint->istemp = true;
-		return tint;
+		if (tint)
+		{
+			const int ret = ((ScpIntObject*)thisObject)->value;
+			tint->value = pow(ret, c);
+			tint->istemp = true;
+			return tint;
+		}
+
 	}
 	return nullptr;
 }

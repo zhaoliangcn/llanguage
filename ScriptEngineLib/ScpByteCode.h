@@ -5,7 +5,7 @@
 #include <windows.h>
 #endif
 
-//字节码解析类
+// 字节码解析类 (Bytecode parsing class)
 
 #define SIZE_OF_RESOURCEID (4)
 #define SIZE_OF_OBJECT_TYPE_ID (1)
@@ -14,7 +14,7 @@
 #define SIZE_OF_LOOPCOUNT (4)
 #define SIZE_OF_RESOURCELEN (4)
 #define SIZE_OF_LANGID (4)
-#define SIZE_OF_BOLCK (2) //代码块长度，2字节
+#define SIZE_OF_BOLCK (2) // 代码块长度，2字节 (Code block length, 2 bytes)
 
 #ifndef MAXINT32
 #define MAXINT32 ((int)(~0U>>1))
@@ -87,7 +87,7 @@ const static unsigned char BC_JUMP = 0x78;
 
 const static unsigned char BC_DEBUG = 0x99;
 
-//整数0到10的资源ID
+// 整数0到10的资源ID (Resource IDs for integers 0 to 10)
 const static int residzero = (MAXINT32 - 1);
 const static int residone = (MAXINT32 - 2);
 const static int residtwo = (MAXINT32 - 3);
@@ -303,33 +303,33 @@ public:
 
 	unsigned char * DoImport(unsigned char * pByteCode);
 
-	//implement loop statement;
+	// 实现循环语句 (Implement loop statement)
 	unsigned char * DoLoop(unsigned char * pByteCode);
 
-	//implement function define
+	// 实现函数定义 (Implement function define)
 	unsigned char * DoObjectFunctionDefine(unsigned char * pByteCode);
 	unsigned char * DoReturn(unsigned char * pByteCode);
 
-	//implement class define;
+	// 实现类定义 (Implement class define)
 	unsigned char * DoObjectClassDefine(unsigned char * pByteCode);
 	unsigned char * DoPublic(unsigned char * pByteCode);
 	unsigned char * DoPrivate(unsigned char * pByteCode);
 	unsigned char * DoInherite(unsigned char * pByteCode);
 
-	//implement while statement;
+	// 实现while语句 (Implement while statement)
 	unsigned char * DoWhileStatement(unsigned char * pByteCode);
 	unsigned char * DoWhileBlock(unsigned char * pByteCode, int size);
 	unsigned char * DoEnd(unsigned char * pByteCode);
 	unsigned char * DoBreak(unsigned char * pByteCode);
 	unsigned char * DoContinue(unsigned char * pByteCode);
 
-	//implement if statement
+	// 实现if语句 (Implement if statement)
 	unsigned char * DoIfStatement(unsigned char * pByteCode);
 	unsigned char * DoContitionBlock(unsigned char * pByteCode, int size);
 	unsigned char * DoTrueBlock(unsigned char * pByteCode, int size);
 	unsigned char * DoFalseBlock(unsigned char * pByteCode, int size);
 
-	//获取字节码实际长度，用于相对定位
+	// 获取字节码实际长度，用于相对定位 (Get actual length of bytecode for relative positioning)
 	int GetByteCodeLength(unsigned char * pByteCode);
 
 	int GetBlockByteCodeLength(unsigned char * ppByteCode);

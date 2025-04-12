@@ -2422,7 +2422,7 @@ ScpExpressionTreeNode *  ScpExpressionAnalyser::ParseFunctionCall(ScpObject * ob
 						else
 						{
 							ScpExpressionAnalyser ana(engine);
-							ScpExpressionTreeNode *root = ana.BuildExressionTreeEx(parameterExpression);
+							ScpExpressionTreeNode *root = ana.BuildExpressionTreeEx(parameterExpression);
 							if (root)
 							{
 								ScpObject * tempobj = NULL;
@@ -2490,7 +2490,7 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 	ULONG value;
 	VTPARAMETERS vtparameters;
 	lex.ParseCommandLine(wcommandline, value, vtparameters);
-	engine->FetchCommand(value, &vtparameters);
+	engine->FetchCommand(value, &vtparameters);//执行后切换到新建类的名称空间
 	currentcommandline++;
 
 	bool parsed = false;
@@ -2531,29 +2531,31 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 			break;
 		}
 		
-		
+		//首先解析成员函数的定义
 		if (value == vl_define )
 		{
 			if (vtparameters.size() > 0)
 			{
-				if (vtparameters.at(0) == ScpGlobalObject::GetInstance()->GetTypeName(ObjFunction))
-				{
-					if (!ParseFunctionDefine(ScriptFile,ScriptBody, currentcommandline))
-					{
-						break;
-					}
-					else
-					{
-						continue;
-					}
-				}//类的内部不能定义类 也不能有条件语句和循环语句
-				else if (vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjClass ||
+				//类的内部不能定义类 也不能有条件语句和循环语句
+				if (vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjClass ||
 					vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjIfStatement||
 					vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjWhileStatement)
 				{
 					engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorInvalidClassDefine);
 					bret = false;
 					break;
+				}
+				else if (vtparameters.at(0) == ScpGlobalObject::GetInstance()->GetTypeName(ObjFunction))
+				{
+					if (!ParseFunctionDefine(ScriptFile, ScriptBody, currentcommandline))
+					{
+						bret = false;
+						break;
+					}
+					else
+					{
+						continue;
+					}
 				}
 			}			
 		}
@@ -2583,6 +2585,7 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 		{
 			engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 		}
+		//类成员对象的定义
 		engine->FetchCommand(value, &vtparameters);
 		engine->GetCurrentObjectSpace()->lastcommand = value;
 		currentcommandline++;
@@ -2665,10 +2668,9 @@ bool ScpExpressionAnalyser::ParseFunctionDefine(const char * ScriptFile, VTSTRIN
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
-	lex.ParseCommandLine(wcommandline, value, vtparameters);
+	lex.ParseCommandLine(wcommandline, value, vtparameters);	
+	engine->FetchCommand(value, &vtparameters);//之后进入函数对象的名称空间
 
-	
-	engine->FetchCommand(value, &vtparameters);
 	currentcommandline++;
 	bool parsed = false;
 	ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
@@ -2747,7 +2749,7 @@ bool ScpExpressionAnalyser::ParseFunctionDefine(const char * ScriptFile, VTSTRIN
 			
 			if (value == vl_define)
 			{
-				//函数内部不能定义类
+				//函数内部不能定义类也不能定义函数
 				if (vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjClass||
 					vtparameters.at(0) == ScpGlobalObject::GetInstance()->GetTypeName(ObjFunction))
 				{
@@ -2879,6 +2881,7 @@ ScpObject *  ScpExpressionAnalyser::ParseWhileDefine(const char * ScriptFile, VT
 			if (value == vl_define)
 			{
 				//语法错误，错误的嵌套定义
+				//循环语句内部不能定义类或者函数
 				if (vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjClass ||
 					vtparameters.at(0) == ScpGlobalObject::GetInstance()->GetTypeName(ObjFunction))
 				{
@@ -3028,6 +3031,7 @@ ScpObject *  ScpExpressionAnalyser::ParseIfDefine(const char * ScriptFile, VTSTR
 			if (value == vl_define)
 			{
 				//语法错误，错误的嵌套定义
+				//条件语句内部不能定义类或者函数
 				if (vtparameters.at(0) == ScpObjectNames::GetSingleInsatnce()->strObjClass ||
 					vtparameters.at(0) == ScpGlobalObject::GetInstance()->GetTypeName(ObjFunction))
 				{
@@ -3507,7 +3511,7 @@ std::string ScpExpressionAnalyser::GetATokenFromPostFix(std::string &PostFixExpr
 	return temp;
 }
 
-ScpExpressionTreeNode *  ScpExpressionAnalyser::BuildExressionTreeEx(std::string Expression)
+ScpExpressionTreeNode *  ScpExpressionAnalyser::BuildExpressionTreeEx(std::string Expression)
 {	
 	ClearNodeStack();
 	lex.SetExpression(Expression);

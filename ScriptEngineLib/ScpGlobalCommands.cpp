@@ -291,7 +291,7 @@ BOOL __stdcall Do_Show_Command(VTPARAMETERS * vtparameters,CScriptEngine * engin
                     std::string Expression = text;
                     ScpExpressionAnalyser ana;
                     ana.Attach(engine);
-                    ScpExpressionTreeNode *root = ana.BuildExressionTreeEx(Expression);
+                    ScpExpressionTreeNode *root = ana.BuildExpressionTreeEx(Expression);
                     if (root)
                     {
                         tempobj = root->CalculateEx(engine);
@@ -628,7 +628,7 @@ BOOL __stdcall Do_Copy_Command(VTPARAMETERS * vtparameters,CScriptEngine * engin
             ScpObjectType type2 =obj2->GetType();
             if(ObjFile==type1&&ObjFile==type2)
             {
-                ScpFileObject::Copy(((ScpFileObject*)obj1)->filename,((ScpFileObject*)obj2)->filename);
+                ScpFileObject::Copy(((ScpFileObject*)obj1)->filename,((ScpFileObject*)obj2)->filename,FALSE);
             }
             else if(ObjString==type1&&ObjString==type2)
             {
@@ -662,7 +662,7 @@ BOOL __stdcall Do_Copy_Command(VTPARAMETERS * vtparameters,CScriptEngine * engin
         {
             if(ScpFileObject::FileExist(name1))
             {
-                ScpFileObject::Copy(name1,name2);
+                ScpFileObject::Copy(name1,name2,FALSE);
             }
         }
     }
@@ -686,7 +686,7 @@ BOOL __stdcall Do_Copy_Command(VTPARAMETERS * vtparameters,CScriptEngine * engin
             {
                 name2=strobj2->content;
             }
-            ScpFileObject::Copy(name1,name2);
+            ScpFileObject::Copy(name1,name2,FALSE);
         }
         else if (ObjString == type)
         {
@@ -2082,48 +2082,48 @@ BOOL __stdcall Do_Traverse_Command(VTPARAMETERS * vtparameters,CScriptEngine * e
                     Clone = TRUE;
                 }
 
-					int count = 0;
-					count = listobj->GetSize();
-					for (int index = 0;index < count;index++)
+				int count = 0;
+				count = listobj->GetSize();
+				for (int index = 0;index < count;index++)
+				{
+					ScpObject * elementobj = listobj->GetElement(index);
+					if (elementobj)
 					{
-						ScpObject * elementobj = listobj->GetElement(index);
-						if (elementobj)
-						{
 
-							std::string elementname = currentObjectSpace->userobject.GetObjectName(elementobj);
-							ScpObjectSpace * OldObjectSpace = NULL;
-							VTPARAMETERS OldRealParameters;
-							if (Clone)
-							{
-								OldObjectSpace = func->FunctionObjectSpace;
-								OldName = func->Name;
-								func->FunctionObjectSpace = new ScpObjectSpace;
-								func->FunctionObjectSpace->belongto = func;
-								func->FunctionObjectSpace->parentspace = currentObjectSpace;
-								func->FunctionObjectSpace->ObjectSpaceType = Space_Function;
-								OldRealParameters = func->RealParameters;
-								func->RealParameters.clear();
-								func->Name = func->GetCloneName();
-							}
-							if (func->RealParameters.size() == 0)
-							{
-								func->RealParameters.push_back(elementname);
-							}
-							func->Do(engine);
-							if (Clone)
-							{
-								ScpObjectSpace * tempObjectSpace = func->FunctionObjectSpace;
-								func->FunctionObjectSpace = OldObjectSpace;
-								delete tempObjectSpace;
-								func->RealParameters = OldRealParameters;
-								func->Name = OldName;
-							}
+						std::string elementname = currentObjectSpace->userobject.GetObjectName(elementobj);
+						ScpObjectSpace * OldObjectSpace = NULL;
+						VTPARAMETERS OldRealParameters;
+						if (Clone)
+						{
+							OldObjectSpace = func->FunctionObjectSpace;
+							OldName = func->Name;
+							func->FunctionObjectSpace = new ScpObjectSpace;
+							func->FunctionObjectSpace->belongto = func;
+							func->FunctionObjectSpace->parentspace = currentObjectSpace;
+							func->FunctionObjectSpace->ObjectSpaceType = Space_Function;
+							OldRealParameters = func->RealParameters;
+							func->RealParameters.clear();
+							func->Name = func->GetCloneName();
+						}
+						if (func->RealParameters.size() == 0)
+						{
+							func->RealParameters.push_back(elementname);
+						}
+						func->Do(engine);
+						if (Clone)
+						{
+							ScpObjectSpace * tempObjectSpace = func->FunctionObjectSpace;
+							func->FunctionObjectSpace = OldObjectSpace;
+							delete tempObjectSpace;
+							func->RealParameters = OldRealParameters;
+							func->Name = OldName;
 						}
 					}
-				}				
-			}
-			else if (obj &&obj->GetType() == ObjRange)
-			{
+				}
+			}				
+		}
+		else if (obj &&obj->GetType() == ObjRange)
+		{
 			ScpRangeObject * rangeobject = (ScpRangeObject *)obj;
 			ScpFunctionObject * func = (ScpFunctionObject*)currentObjectSpace->FindObject(funcname);
 			if (func && (func->FormalParameters.size() == 1))
@@ -2178,10 +2178,190 @@ BOOL __stdcall Do_Traverse_Command(VTPARAMETERS * vtparameters,CScriptEngine * e
 					}
 				}
 			}
-			}
 		}
-		return TRUE;
 	}
+    else if (vtparameters->size() > 2)
+    {
+        size_t paramcount = vtparameters->size();
+        std::string tablename = vtparameters->at(0);
+        std::string funcname = vtparameters->at(1);
+        ScpObject* obj = currentObjectSpace->FindObject(tablename);
+        if (obj && obj->GetType() == ObjTable)
+        {
+            ScpTableObject* tableobj = (ScpTableObject*)obj;
+            ScpFunctionObject* func = (ScpFunctionObject*)currentObjectSpace->FindObject(funcname);
+            if (func && (func->FormalParameters.size() == paramcount - 1))
+            {
+                BOOL Clone = FALSE;
+                std::string OldName;
+                if (currentObjectSpace->IsMyParentSpace(func->FunctionObjectSpace) || currentObjectSpace == func->FunctionObjectSpace)
+                {
+                    //	//说明是递归的函数调用
+                    Clone = TRUE;
+                }
+                int count = 0;
+                count = tableobj->GetSize();
+                for (int index = 0; index < count; index++)
+                {
+                    ScpObject* elementobj = tableobj->GetElement(index);
+                    if (elementobj)
+                    {
+                        std::string elementname = currentObjectSpace->userobject.GetObjectName(elementobj);
+                        ScpObjectSpace* OldObjectSpace = NULL;
+                        VTPARAMETERS OldRealParameters;
+                        if (Clone)
+                        {
+                            OldObjectSpace = func->FunctionObjectSpace;
+                            OldName = func->Name;
+                            func->FunctionObjectSpace = new ScpObjectSpace;
+                            func->FunctionObjectSpace->belongto = func;
+                            func->FunctionObjectSpace->parentspace = currentObjectSpace;
+                            func->FunctionObjectSpace->ObjectSpaceType = Space_Function;
+                            OldRealParameters = func->RealParameters;
+                            func->RealParameters.clear();
+                            func->Name = func->GetCloneName();
+                        }
+                        if (func->RealParameters.size() == 0)
+                        {
+                            func->RealParameters.push_back(elementname);
+                        }
+                        for (size_t i = 2; i < paramcount; i++)
+                        {
+                            std::string paramname = vtparameters->at(i);
+                            func->RealParameters.push_back(paramname);
+                        }
+                        func->Do(engine);
+                        if (Clone)
+                        {
+                            ScpObjectSpace* tempObjectSpace = func->FunctionObjectSpace;
+                            func->FunctionObjectSpace = OldObjectSpace;
+                            delete tempObjectSpace;
+                            func->RealParameters = OldRealParameters;
+                            func->Name = OldName;
+                        }
+                    }
+                }
+            }
+        }
+        else if (obj && obj->GetType() == ObjList)
+        {
+            ScpListObject* listobj = (ScpListObject*)obj;
+            ScpFunctionObject* func = (ScpFunctionObject*)currentObjectSpace->FindObject(funcname);
+            if (func && (func->FormalParameters.size() == paramcount - 1))
+            {
+                BOOL Clone = FALSE;
+                std::string OldName;
+                if (currentObjectSpace->IsMyParentSpace(func->FunctionObjectSpace) || currentObjectSpace == func->FunctionObjectSpace)
+                {
+                    //	//说明是递归的函数调用
+                    Clone = TRUE;
+                }
+                int count = 0;
+                count = listobj->GetSize();
+                for (int index = 0; index < count; index++)
+                {
+                    ScpObject* elementobj = listobj->GetElement(index);
+                    if (elementobj)
+                    {
+                        std::string elementname = currentObjectSpace->userobject.GetObjectName(elementobj);
+                        ScpObjectSpace* OldObjectSpace = NULL;
+                        VTPARAMETERS OldRealParameters;
+                        if (Clone)
+                        {
+                            OldObjectSpace = func->FunctionObjectSpace;
+                            OldName = func->Name;
+                            func->FunctionObjectSpace = new ScpObjectSpace;
+                            func->FunctionObjectSpace->belongto = func;
+                            func->FunctionObjectSpace->parentspace = currentObjectSpace;
+                            func->FunctionObjectSpace->ObjectSpaceType = Space_Function;
+                            OldRealParameters = func->RealParameters;
+                            func->RealParameters.clear();
+                            func->Name = func->GetCloneName();
+                        }
+                        if (func->RealParameters.size() == 0)
+                        {
+                            func->RealParameters.push_back(elementname);
+                        }
+                        for (size_t i = 2; i < paramcount; i++)
+                        {
+                            std::string paramname = vtparameters->at(i);
+                            func->RealParameters.push_back(paramname);
+                        }
+                        func->Do(engine);
+                        if (Clone)
+                        {
+                            ScpObjectSpace* tempObjectSpace = func->FunctionObjectSpace;
+                            func->FunctionObjectSpace = OldObjectSpace;
+                            delete tempObjectSpace;
+                            func->RealParameters = OldRealParameters;
+                            func->Name = OldName;
+                        }
+                    }
+                }
+            }
+        }
+        else if (obj && obj->GetType() == ObjRange)
+        {
+            ScpRangeObject* rangeobject = (ScpRangeObject*)obj;
+            ScpFunctionObject* func = (ScpFunctionObject*)currentObjectSpace->FindObject(funcname);
+            if (func && (func->FormalParameters.size() == paramcount - 1))
+            {
+                BOOL Clone = FALSE;
+                std::string OldName;
+                if (currentObjectSpace->IsMyParentSpace(func->FunctionObjectSpace) || currentObjectSpace == func->FunctionObjectSpace)
+                {
+                    //	//说明是递归的函数调用
+                    Clone = TRUE;
+                }
+                int count = 0;
+                count = rangeobject->Elements.size();
+                for (int index = 0; index < count; index++)
+                {
+                    ScpObject* elementobj = rangeobject->Elements.at(index);
+                    if (elementobj)
+                    {
+                        std::string elementname = currentObjectSpace->userobject.GetObjectName(elementobj);
+                        elementname = "element" + currentObjectSpace->GetNewTempObjectName();
+                        currentObjectSpace->AddObject(elementname, elementobj);
+                        ScpObjectSpace* OldObjectSpace = NULL;
+                        VTPARAMETERS OldRealParameters;
+                        if (Clone)
+                        {
+                            OldObjectSpace = func->FunctionObjectSpace;
+                            OldName = func->Name;
+                            func->FunctionObjectSpace = new ScpObjectSpace;
+                            func->FunctionObjectSpace->belongto = func;
+                            func->FunctionObjectSpace->parentspace = currentObjectSpace;
+                            func->FunctionObjectSpace->ObjectSpaceType = Space_Function;
+                            OldRealParameters = func->RealParameters;
+                            func->RealParameters.clear();
+                            func->Name = func->GetCloneName();
+                        }
+                        if (func->RealParameters.size() == 0)
+                        {
+                            func->RealParameters.push_back(elementname);
+                        }
+                        for (size_t i = 2; i < paramcount; i++)
+                        {
+                            std::string paramname = vtparameters->at(i);
+                            func->RealParameters.push_back(paramname);
+                        }
+                        func->Do(engine);
+                        if (Clone)
+                        {
+                            ScpObjectSpace* tempObjectSpace = func->FunctionObjectSpace;
+                            func->FunctionObjectSpace = OldObjectSpace;
+                            delete tempObjectSpace;
+                            func->RealParameters = OldRealParameters;
+                            func->Name = OldName;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return TRUE;
+}
 	/*
 	“排序”命令
 	*/

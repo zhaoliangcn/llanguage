@@ -1,7 +1,7 @@
 /*
 //author :zhaoliang
 //email:zhaoliangcn@126.com
-//code descriptyon:
+//code descriyption:
 */
 #include "ScpIfStatementObject.h"
 #include "commanddefine_uni.h"
@@ -102,7 +102,7 @@ int ScpIfStatementObject::ReComputeCondition()
 				//需要优化，这里每次都对条件表达式进行重新解析
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();//IfStatementObjectSpace.parentspace;	
 				
-				ScpExpressionTreeNode *	ConditionExpressionroot= engine->ana.BuildExressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot= engine->ana.BuildExpressionTreeEx(ConditionExpression);
 				if(ConditionExpressionroot)
 				{
 					ScpObject * retobj= ConditionExpressionroot->CalculateEx(engine);
@@ -186,7 +186,7 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 				//需要优化，这里每次都对条件表达式进行重新解析
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();//IfStatementObjectSpace.parentspace;	
 				
-				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExpressionTreeEx(ConditionExpression);
 				if (ConditionExpressionroot)
 				{
 					ByteCodeMemoryStream stream;

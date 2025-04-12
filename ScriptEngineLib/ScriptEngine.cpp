@@ -746,7 +746,7 @@ int  CScriptEngine::DoloadedScript(SCRIPTRUNTYPE mode)
 		{
 			ByteCodeMemoryStream memstream;
 			bytecode.GenByteCodeFromCommand(ulcommand, param, memstream, this);
-			bytecode.bytecodemem->AppendByteCode(memstream.membuf, memstream.codelength);
+			bytecode.bytecodemem->AppendByteCode(memstream.membuf, memstream.codelength);			
 			memstream.Release();
 		}
 		else
@@ -756,8 +756,11 @@ int  CScriptEngine::DoloadedScript(SCRIPTRUNTYPE mode)
 	}
 	
 	//dwTimeCount = dwEnd - dwStart;
-	if(Jit || Build)
-		bytecode.DumpToFile((currentscriptfilename+".scpb").c_str());
+	if (Jit || Build)
+	{
+		bytecode.DumpToFile((currentscriptfilename + ".scpb").c_str());
+		DoMemByteCode(bytecode.bytecodemem->membuf, bytecode.bytecodemem->codelength);
+	}
 	currentObjectSpace->userobject.Destroy();
 	//printf("%d\n",dwTimeCount);
 	return 0;
@@ -819,16 +822,24 @@ void CScriptEngine::Create_Global_CommndLine_TableObject()
 				}
 				if (i == 1)
 				{
+					std::string filepathname = STDSTRINGEXT::W2UTF(szArglist[i]);
+					if (!ScpFileObject::IsAbsolutePath(filepathname))
+					{
+						filepathname  = ScpFileObject::GetAbsolutePath(filepathname);
+					}
+					//第一个参数是脚本文件名
 					ScpStringObject * strobj1 = new ScpStringObject;
 					if (strobj1)
 					{
-						strobj1->content = STDSTRINGEXT::W2UTF(szArglist[i]);
+						strobj1->content = filepathname;
 						currentObjectSpace->AddObject(ScpObjectNames::GetSingleInsatnce()->strCurrentScriptFile, strobj1);
 					}
+					//获取脚本文件的路径
+					//如果是相对路径，需要转换为绝对路径
 					ScpStringObject * strobj2 = new ScpStringObject;
 					if (strobj2)
 					{
-						strobj2->content = PathStripFileName(STDSTRINGEXT::W2UTF(szArglist[i]));
+						strobj2->content = PathStripFileName(filepathname);
 						currentObjectSpace->AddObject(ScpObjectNames::GetSingleInsatnce()->strCurrentScriptPath, strobj2);
 					}
 				}

@@ -16,6 +16,9 @@ ScpWhileStatementObject::ScpWhileStatementObject(CScriptEngine * eg):whilexpress
 }
 int ScpWhileStatementObject::ReComputeConditionResult()
 {
+    if (ConditionExpression.empty()) {
+        return 0;
+    }
 	ScpObjectSpace *currentObjectSpace = engine->GetCurrentObjectSpace();
 	if(ConditionExpression=="1")
 	{
@@ -30,7 +33,7 @@ int ScpWhileStatementObject::ReComputeConditionResult()
 		}
 		else
 		{
-			ScpExpressionTreeNode  *ConditionExpressionroot= engine->ana.BuildExressionTreeEx(ConditionExpression);
+			ScpExpressionTreeNode  *ConditionExpressionroot= engine->ana.BuildExpressionTreeEx(ConditionExpression);
 			if(ConditionExpressionroot)
 			{
 				ScpObject * retobj=NULL;
@@ -105,7 +108,7 @@ bool ScpWhileStatementObject::MakeConditionByteCode()
 			else
 			{
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();					
-				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExpressionTreeEx(ConditionExpression);
 				if (ConditionExpressionroot)
 				{
 					ByteCodeMemoryStream stream;
@@ -142,8 +145,11 @@ void ScpWhileStatementObject::SetCondition(std::string condition)
 }
 ScpWhileStatementObject::~ScpWhileStatementObject(void)
 {
-	
-	
+    if (whilexpressionblock)
+    {
+        delete whilexpressionblock;
+        whilexpressionblock = nullptr;
+    }
 }
 void ScpWhileStatementObject::Show(CScriptEngine * engine)
 {

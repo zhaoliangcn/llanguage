@@ -36,9 +36,6 @@ ScpBigIntObject::ScpBigIntObject()
 	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
 	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
 
-	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
-	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
-
 	BindObjectInnerFuction(scpcommand_cuberoot_CN, InnerFunction_cuberoot);
 	BindObjectInnerFuction(scpcommand_cuberoot_EN, InnerFunction_cuberoot);
 
@@ -419,5 +416,5 @@ ScpObject * __stdcall ScpBigIntObjectFactory(VTPARAMETERS * paramters, CScriptEn
 			return obj;
 		}
 	}
-	return NULL;
+	return nullptr;
 }

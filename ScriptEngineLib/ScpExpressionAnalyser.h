@@ -112,7 +112,7 @@ public:
 	
 
 
-	ScpExpressionTreeNode *  BuildExressionTreeEx(std::string Expression);   //构建表达式的语法树
+	ScpExpressionTreeNode *  BuildExpressionTreeEx(std::string Expression);   //构建表达式的语法树
 	ScpExpressionTreeNode *  PostFixExpressionToTree(std::string PostFixExpression);   //通过后缀表达式构建语法树
 	void EmptyStack(std::string &PostFixExpression,ScpObjStack &OperationStack);
 	void PopStack(std::string &PostFixExpression,ScpObjStack &OperationStack);

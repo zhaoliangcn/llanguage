@@ -12,16 +12,25 @@
 #include "../Common/commonutil.hpp"
 ScpClassObject::ScpClassObject(void)
 {
-	objecttype = ObjClass;
-	UserClassObjectSpace.ObjectSpaceType = Space_Class;
-	UserClassObjectSpace.belongto = this;
-	MemberVariableAttribute = Attr_Private;
+    // 设置对象类型为类对象
+    objecttype = ObjClass;
+    
+    // 初始化用户类对象空间，设置空间类型为类空间
+    UserClassObjectSpace.ObjectSpaceType = Space_Class;
+    
+    // 设置该对象空间属于当前类对象
+    UserClassObjectSpace.belongto = this;
+    
+    // 设置成员变量的默认访问属性为私有
+    MemberVariableAttribute = Attr_Private;
 
-	BindObjectInnerFuction(scpcommand_en_show, InnerFunction_Show);
-	BindObjectInnerFuction(scpcommand_cn_show, InnerFunction_Show);
+    // 绑定内部函数：将英文和中文的"show"命令都绑定到InnerFunction_Show函数
+    BindObjectInnerFuction(scpcommand_en_show, InnerFunction_Show);
+    BindObjectInnerFuction(scpcommand_cn_show, InnerFunction_Show);
 
-	BindObjectInnerFuction(scpcommand_cn_get, InnerFunction_Get);
-	BindObjectInnerFuction(scpcommand_en_get, InnerFunction_Get);
+    // 绑定内部函数：将英文和中文的"get"命令都绑定到InnerFunction_Get函数
+    BindObjectInnerFuction(scpcommand_cn_get, InnerFunction_Get);
+    BindObjectInnerFuction(scpcommand_en_get, InnerFunction_Get);
 }
 
 ScpClassObject::~ScpClassObject(void)
@@ -145,26 +154,47 @@ ScpObject * ScpClassObject::InnerFunction_Get(ScpObject * thisObject, VTPARAMETE
 }
 ScpObject * ScpClassObject::CallMemberFunction(std::string functionname, VTPARAMETERS * RealParameters, CScriptEngine * engine)
 {
-	ScpFunctionObject * func = (ScpFunctionObject*)UserClassObjectSpace.FindObject(functionname);
-	if (func)
-	{
-		func->RealParameters.clear();
-		if (RealParameters)
-		{
-			for (int i = 0;i < RealParameters->size();i++)
-			{
-				func->RealParameters.push_back(RealParameters->at(i));
-			}
-		}
+    // 在用户类对象空间中查找指定的函数对象
+    ScpFunctionObject * func = (ScpFunctionObject*)UserClassObjectSpace.FindObject(functionname);
+    
+    // 如果找到函数对象
+    if (func)
+    {
+        // 清空函数对象的实际参数列表
+        func->RealParameters.clear();
+        
+        // 如果有传入的实际参数
+        if (RealParameters)
+        {
+            // 将传入的参数复制到函数对象的参数列表中
+            for (int i = 0;i < RealParameters->size();i++)
+            {
+                func->RealParameters.push_back(RealParameters->at(i));
+            }
+        }
 
-		ScpObjectSpace * space = engine->GetCurrentObjectSpace();
-		ScpObjectSpace * oldparentspace = UserClassObjectSpace.parentspace;
-		UserClassObjectSpace.parentspace = space;
-		engine->SetCurrentObjectSpace(&UserClassObjectSpace);
-		func->Do(engine);
-		UserClassObjectSpace.parentspace = oldparentspace;
-		engine->SetCurrentObjectSpace(space);
-		return func->Result;
-	}
-	return NULL;
+        // 保存当前的对象空间和父空间
+        ScpObjectSpace * space = engine->GetCurrentObjectSpace();
+        ScpObjectSpace * oldparentspace = UserClassObjectSpace.parentspace;
+        
+        // 设置用户类对象空间的父空间为当前空间
+        UserClassObjectSpace.parentspace = space;
+        
+        // 将引擎的当前对象空间设置为用户类对象空间
+        engine->SetCurrentObjectSpace(&UserClassObjectSpace);
+        
+        // 执行函数
+        func->Do(engine);
+        
+        // 恢复原来的父空间
+        UserClassObjectSpace.parentspace = oldparentspace;
+        
+        // 恢复引擎的当前对象空间
+        engine->SetCurrentObjectSpace(space);
+        
+        // 返回函数执行结果
+        return func->Result;
+    }
+    // 如果未找到函数，返回NULL
+    return NULL;
 }

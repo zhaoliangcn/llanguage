@@ -481,8 +481,10 @@ BOOL ScpObjectDefine(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 					engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorNestClassDefine);
 					return Ret;
 				}
+				//确保参数个数正确
 				if (vtparameters->size() == 2)
 				{
+					//创建类对象，这时候类对象是一个空壳，不包含成员函数
 					ScpClassObject *classobj = new ScpClassObject;
 					if (classobj)
 					{

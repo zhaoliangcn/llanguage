@@ -989,7 +989,7 @@ bool ScriptByteCode::GetByteCodeCompute(VTPARAMETERS & vtparameters, ByteCodeMem
 			expression = ((ScpStringObject*)obj2)->content;
 		}
 		
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ByteCodeMemoryStream stream;
@@ -1062,7 +1062,7 @@ bool ScriptByteCode::GenByteCodeReturn(VTPARAMETERS & vtparameters, ByteCodeMemo
 			}
 		}
 		
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ByteCodeMemoryStream stream;

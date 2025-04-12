@@ -125,8 +125,10 @@ public:
 	static BOOL Encrypt(std::string filename,std::string password, std::string algorithm);
 	static BOOL Decrypt(std::string filename, std::string password, std::string algorithm);
 	static BOOL Move(std::string src,std::string dst);
-	static BOOL Copy(std::string src,std::string dst);
+	static BOOL Copy(std::string src,std::string dst,BOOL force );
 	static __int64 GetSize(std::string filename);
+	static bool IsAbsolutePath(std::string& filepathname);
+	static std::string GetAbsolutePath(const std::string& relativePath);
 	std::string filename;
 	unsigned char * content;
 	__int64 currentpos;

@@ -16,7 +16,11 @@
 #ifdef _WIN32
 #include "../Common/IsValidFileName.h"
 #else
+#include <unistd.h>
+#include <limits.h>
+#include <stdlib.h>
 #endif
+
 #include <iostream>
 #include <fstream>
 #ifndef WIN32
@@ -1374,7 +1378,7 @@ BOOL ScpFileObject::Move(std::string src, std::string dst)
 	return (rename(src.c_str(), dst.c_str()) != -1);
 #endif
 }
-BOOL ScpFileObject::Copy(std::string src, std::string dst)
+BOOL ScpFileObject::Copy(std::string src, std::string dst,BOOL force)
 {
 #ifdef WIN32
 	if (IsDir(dst))
@@ -1386,7 +1390,7 @@ BOOL ScpFileObject::Copy(std::string src, std::string dst)
 		}
 		dst += MyPathStripPath(src.c_str());
 	}
-	return CopyFileA(src.c_str(), dst.c_str(), TRUE);
+	return CopyFileA(src.c_str(), dst.c_str(), !force);
 #else
 	if (IsDir(dst))
 	{
@@ -1428,6 +1432,49 @@ __int64 ScpFileObject::GetSize(std::string FileName)
 	}
 #endif
 
+}
+
+bool ScpFileObject::IsAbsolutePath(std::string& filepathname)
+{
+	if (filepathname.empty()) {
+		return false;
+	}
+
+#ifdef _WIN32
+	// Windows: 绝对路径以驱动器号（如 C:\）或反斜杠（如 \）开头
+	if (filepathname.size() > 1 && filepathname[1] == ':') {
+		return true;
+	}
+	if (filepathname[0] == '\\') {
+		return true;
+	}
+#else
+	// Unix: 绝对路径以斜杠（如 /）开头
+	if (filepathname[0] == '/') {
+		return true;
+	}
+#endif
+
+	return false;
+	
+}
+
+std::string ScpFileObject::GetAbsolutePath(const std::string& relativePath)
+{
+	char absolutePath[4096];
+
+#ifdef _WIN32
+	if (_fullpath(absolutePath, relativePath.c_str(), 4096) != nullptr) {
+		return std::string(absolutePath);
+	}
+#else
+	if (realpath(relativePath.c_str(), absolutePath) != nullptr) {
+		return std::string(absolutePath);
+	}
+#endif
+
+	// 如果转换失败，返回原始路径
+	return relativePath;
 }
 
 ScpObject * __stdcall ScpFileObjectFactory(VTPARAMETERS * paramters, CScriptEngine * engine)
@@ -2023,7 +2070,40 @@ ScpObject * ScpFileObject::InnerFunction_copy(ScpObject * thisObject, VTPARAMETE
 				destname = ((ScpStringObject *)obj1)->content;
 			}
 		}	
-		if (Copy(((ScpFileObject*)thisObject)->filename, destname))
+		if (Copy(((ScpFileObject*)thisObject)->filename, destname,FALSE))
+		{
+			retval->value = 1;
+		}
+	}
+	else if (parameters->size() == 2)
+	{
+		ScpObjectSpace* currentObjectSpace = engine->GetCurrentObjectSpace();
+		std::string destname = parameters->at(0);
+		std::string param1= parameters->at(1);
+		StringStripQuote(destname);
+		StringStripQuote(param1);
+		ScpObject* obj1 = currentObjectSpace->FindObject(destname);
+		if (obj1)
+		{
+			if (obj1->GetType() == ObjString)
+			{
+				destname = ((ScpStringObject*)obj1)->content;
+			}
+		}
+		ScpObject* obj2 = currentObjectSpace->FindObject(param1);
+		if (obj2)
+		{
+			if (obj2->GetType() == ObjString)
+			{
+				param1 = ((ScpStringObject*)obj2)->content;
+			}
+		}
+		BOOL bForce = FALSE;
+		if (stricmp(param1.c_str(), "force") == 0)
+		{
+			bForce = TRUE;
+		}
+		if (Copy(((ScpFileObject*)thisObject)->filename, destname, bForce))
 		{
 			retval->value = 1;
 		}

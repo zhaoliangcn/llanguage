@@ -176,191 +176,213 @@ ScpStringObject * ScpStringObject::SubStr(ULONG start, CScriptEngine * engine)
 }
 
 
-ScpStringObject*  ScpStringObject::Format(ScpStringObject * str1,const char * strForm,VTPARAMETERS &parameters)
-{
-	if(parameters.size()==0)
-	{
-		char Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm);
-#else 
-		sprintf(Buffer,strForm);
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==1)
-	{
-		std::string temp = parameters.at(0);
+// ScpStringObject*  ScpStringObject::Format(ScpStringObject * str1,const char * strForm,VTPARAMETERS &parameters)
+// {
+// 	if(parameters.size()==0)
+// 	{
+// 		char Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm);
+// #else 
+// 		sprintf(Buffer,strForm);
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==1)
+// 	{
+// 		std::string temp = parameters.at(0);
 
-		char Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,temp.c_str());
-#else 
-		sprintf(Buffer,strForm,temp.c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==2)
-	{
-		char Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==3)
-	{
-		char Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==4)
-	{
-		char Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==5)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str(),parameters.at(4).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str(),parameters.at(4).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==6)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==7)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==8)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==9)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str(),
-			parameters.at(8).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str(),
-			parameters.at(8).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	else if (parameters.size()==10)
-	{
-		char  Buffer[4096]={0};
-#ifdef _WIN32
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str(),
-			parameters.at(8).c_str(),
-			parameters.at(9).c_str());
-#else 
-		sprintf(Buffer,strForm,parameters.at(0).c_str(),
-			parameters.at(1).c_str(),
-			parameters.at(2).c_str(),
-			parameters.at(3).c_str(),
-			parameters.at(4).c_str(),
-			parameters.at(5).c_str(),
-			parameters.at(6).c_str(),
-			parameters.at(7).c_str(),
-			parameters.at(8).c_str(),
-			parameters.at(9).c_str());
-#endif
-		str1->content=Buffer;
-	}
-	return str1;
+// 		char Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,temp.c_str());
+// #else 
+// 		sprintf(Buffer,strForm,temp.c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==2)
+// 	{
+// 		char Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==3)
+// 	{
+// 		char Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==4)
+// 	{
+// 		char Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==5)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str(),parameters.at(4).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),parameters.at(1).c_str(),parameters.at(2).c_str(),parameters.at(3).c_str(),parameters.at(4).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==6)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==7)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==8)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==9)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str(),
+// 			parameters.at(8).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str(),
+// 			parameters.at(8).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	else if (parameters.size()==10)
+// 	{
+// 		char  Buffer[4096]={0};
+// #ifdef _WIN32
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str(),
+// 			parameters.at(8).c_str(),
+// 			parameters.at(9).c_str());
+// #else 
+// 		sprintf(Buffer,strForm,parameters.at(0).c_str(),
+// 			parameters.at(1).c_str(),
+// 			parameters.at(2).c_str(),
+// 			parameters.at(3).c_str(),
+// 			parameters.at(4).c_str(),
+// 			parameters.at(5).c_str(),
+// 			parameters.at(6).c_str(),
+// 			parameters.at(7).c_str(),
+// 			parameters.at(8).c_str(),
+// 			parameters.at(9).c_str());
+// #endif
+// 		str1->content=Buffer;
+// 	}
+// 	return str1;
+// }
+template<typename... Args>
+ScpStringObject* ScpStringObject::Format(ScpStringObject* str1, const char* strForm, Args&&... args)
+{
+    const size_t BUFFER_SIZE = 4096;
+    char Buffer[BUFFER_SIZE] = {0};
+    
+    // 使用 snprintf 并检查返回值
+    int result = snprintf(Buffer, BUFFER_SIZE, strForm, std::forward<Args>(args)...);
+    
+    if (result < 0) {
+        // 处理格式化错误
+        str1->content = "Format error";
+    } else if (static_cast<size_t>(result) >= BUFFER_SIZE) {
+        // 处理缓冲区溢出
+        str1->content = "Buffer overflow";
+    } else {
+        // 成功格式化
+        str1->content = Buffer;
+    }
+
+    return str1;
 }
 ScpStringObject* ScpStringObject::SetString(const char* str)
 {

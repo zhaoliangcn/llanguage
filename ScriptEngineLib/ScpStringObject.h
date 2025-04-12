@@ -45,7 +45,9 @@ public:
 	static ScpStringObject * ToLower(ScpStringObject * str1);
 	static ScpStringObject * ToHex(ScpStringObject * str1);
 	static ScpStringObject * SubStr(ScpStringObject * org,ScpStringObject * sub,ULONG start,ULONG length);	
-	static ScpStringObject*  Format(ScpStringObject * str1,const char  * strForm,VTPARAMETERS &parameters);
+	template<typename... Args>
+    static ScpStringObject* Format(ScpStringObject* str1, const char* strForm, Args&&... args);
+	//static ScpStringObject*  Format(ScpStringObject * str1,const char  * strForm,VTPARAMETERS &parameters);
 	static ScpStringObject* Connect(ScpStringObject* str1, ScpStringObject* str2, ScpStringObject* result);
 
 	ScpStringObject* SetString(const char * str);

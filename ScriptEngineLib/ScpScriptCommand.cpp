@@ -250,7 +250,7 @@ BOOL CScriptCommand::Do_Return_Command(VTPARAMETERS * vtparameters, CScriptEngin
 			//{
 			//	expression = L"(" + expression + L")";
 			//}
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -662,7 +662,7 @@ BOOL CScriptCommand::Do_While_Command(VTPARAMETERS * vtparameters, CScriptEngine
 		BOOL bRet = FALSE;
 		do
 		{
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -718,7 +718,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 				exp = strobj2->content;
 			}			
 			DebugUtil::TraceW(L"Compute Enter expression %s", exp.c_str());
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(exp);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(exp);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -746,7 +746,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 					expression = strobj1->content;
 				}
 				DebugUtil::TraceW(L"Compute Enter expression %s", expression.c_str());
-				ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+				ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 				if (root)
 				{
 					ScpObject * retobj = root->CalculateEx(engine);
@@ -775,7 +775,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 				expression = strobj1->content;
 			}
 			//DebugUtil::TraceW(L"Compute Enter expression %s", expression.c_str());
-			ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -1177,7 +1177,7 @@ BOOL  CScriptCommand::Do_Test_Command(VTPARAMETERS * vtparameters, CScriptEngine
 				expression = strobjexpression->content;
 			}
 		}
-		ScpExpressionTreeNode *root = engine->ana.BuildExressionTreeEx(expression);
+		ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
 		if (root)
 		{
 			ScpObject * retobj = root->CalculateEx(engine);

@@ -35,9 +35,7 @@ ScpDoubleObject::ScpDoubleObject()
 	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
 	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
 
-	BindObjectInnerFuction(scpcommand_cubic_CN, InnerFunction_cubic);
-	BindObjectInnerFuction(scpcommand_cubic_EN, InnerFunction_cubic);
-
+	
 	BindObjectInnerFuction(scpcommand_cuberoot_CN, InnerFunction_cuberoot);
 	BindObjectInnerFuction(scpcommand_cuberoot_EN, InnerFunction_cuberoot);
 
@@ -92,15 +90,7 @@ ScpObject * ScpDoubleObject::Clone(std::string strObjName)
 }	
 std::string ScpDoubleObject::ToString()
 {
-	std::string temp;
-	char Buffer[512]={0};
-#ifdef _WIN32
-    StringCbPrintfA(Buffer,sizeof(Buffer),"%f",value);
-#else 
-	sprintf(Buffer,"%f",value);	
-#endif
-	temp=Buffer;
-	return temp;
+	return std::to_string(value);
 }
 void ScpDoubleObject::Release() 
 {
@@ -487,5 +477,5 @@ ScpObject * __stdcall ScpDoubleObjectFactory(VTPARAMETERS * paramters, CScriptEn
 			return obj;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
