@@ -470,7 +470,7 @@ BOOL copy_dir(std::string source, std::string dest)
 		{
 			char pathname[MAX_PATH] = { 0 };
 			sprintf_s(pathname, "%s\\%s", source.c_str(), findFileData.cFileName);
-			if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && !(findFileData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT))
 			{
 				//递归创建文件夹+"/"+finder.GetFileName()
 				copy_dir(pathname, dest + "\\" + findFileData.cFileName);
@@ -635,7 +635,7 @@ void ScpDirectoryObject::EnumAll()
 			}
 			sprintf_s(pathname, "%s\\%s", directory.c_str(), findFileData.cFileName);
 			all.push_back(STDSTRINGEXT::AToU(pathname));
-			if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && !(findFileData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT))
 			{
 				allsubdir.push_back(STDSTRINGEXT::AToU(pathname));
 			}
@@ -1200,7 +1200,19 @@ ScpObject * __stdcall ScpDirectoryObjectFactory(VTPARAMETERS * paramters, CScrip
 		std::string &userobjname = paramters->at(1);
 		std::string content;
 		if (paramters->size() == 3)
+		{
 			content = paramters->at(2);
+			ScpStringObject* obj = (ScpStringObject*)engine->GetCurrentObjectSpace()->FindObject(content);
+			if (obj)
+			{
+				ScpObjectType type = obj->GetType();
+				if (ObjString == type)
+				{
+					content = obj->content;
+				}
+			}
+		}
+			
 		StringStripQuote(content);
 		ScpDirectoryObject *dirobj = new ScpDirectoryObject;
 		if (dirobj)
