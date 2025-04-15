@@ -2099,10 +2099,17 @@ ScpObject * ScpFileObject::InnerFunction_copy(ScpObject * thisObject, VTPARAMETE
 			}
 		}
 		BOOL bForce = FALSE;
+#ifdef _WIN32
 		if (stricmp(param1.c_str(), "force") == 0)
 		{
 			bForce = TRUE;
 		}
+#else 
+		if (strcasecmp(param1.c_str(), "force") == 0)
+		{
+			bForce = TRUE;
+		}
+#endif
 		if (Copy(((ScpFileObject*)thisObject)->filename, destname, bForce))
 		{
 			retval->value = 1;
