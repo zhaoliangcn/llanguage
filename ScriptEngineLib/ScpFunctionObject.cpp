@@ -296,7 +296,7 @@ std::string ScpFunctionObject::GetCloneName()
 	int AppendIndex = 0;
 	int AppendIndexLen = 0;
 	std::string wsAppendIndex;
-	size_t pos = Name.rfind("LSClone");
+	const size_t pos = Name.rfind("LSClone");
 	if (pos!=std::string::npos)
 	{		
 		AppendIndexLen = Name.length()-pos - 7;

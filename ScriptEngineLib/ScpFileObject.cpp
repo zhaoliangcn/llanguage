@@ -6,6 +6,7 @@
 #include "ScpFileObject.h"
 
 #include "ScpBigIntObject.h"
+#include "ScpDoubleObject.h"
 #include "ScpStringObject.h"
 #include "ScpGlobalObject.h"
 #include "ScriptEngine.h"
@@ -1485,8 +1486,10 @@ ScpObject * __stdcall ScpFileObjectFactory(VTPARAMETERS * paramters, CScriptEngi
 		std::string &userobjname = paramters->at(1);
 		std::string content;
 		if (paramters->size() == 3)
+		{
 			content = paramters->at(2);
-		StringStripQuote(content);
+			StringStripQuote(content);
+		}			
 		ScpFileObject* fileobj = new ScpFileObject;
 		if (fileobj)
 		{
@@ -2041,6 +2044,12 @@ ScpObject * ScpFileObject::InnerFunction_write(ScpObject * thisObject, VTPARAMET
 				ULONG size = sizeof(__int64);
 				((ScpFileObject*)thisObject)->write(((ScpFileObject*)thisObject)->GetCurrentPos(), size, pint);
 			}
+			else if (obj1->GetType() == ObjDouble)
+			{
+				void* pdouble = (void*)&((ScpDoubleObject*)obj1)->value;
+				ULONG size = sizeof(double);
+				((ScpFileObject*)thisObject)->write(((ScpFileObject*)thisObject)->GetCurrentPos(), size, pdouble);
+			}
 		}
 		else
 		{
@@ -2100,7 +2109,7 @@ ScpObject * ScpFileObject::InnerFunction_copy(ScpObject * thisObject, VTPARAMETE
 		}
 		BOOL bForce = FALSE;
 #ifdef _WIN32
-		if (stricmp(param1.c_str(), "force") == 0)
+		if (_stricmp(param1.c_str(), "force") == 0)
 		{
 			bForce = TRUE;
 		}
@@ -2198,6 +2207,24 @@ ScpObject * ScpFileObject::InnerFunction_append(ScpObject * thisObject, VTPARAME
 			{
 				ScpMemoryObject* mem = (ScpMemoryObject*)obj1;
 				((ScpFileObject*)thisObject)->append(mem->Size, mem->Address);
+			}
+			else if (obj1->GetType() == ObjInt)
+			{
+				void* pint = (void*)&((ScpIntObject*)obj1)->value;
+				ULONG size = sizeof(int);
+				((ScpFileObject*)thisObject)->append(size, pint);
+			}
+			else if (obj1->GetType() == ObjBigInt)
+			{
+				void* pint = (void*)&((ScpBigIntObject*)obj1)->value;
+				ULONG size = sizeof(__int64);
+				((ScpFileObject*)thisObject)->append( size, pint);
+			}
+			else if (obj1->GetType() == ObjDouble)
+			{
+				void* pdouble = (void*)&((ScpDoubleObject*)obj1)->value;
+				ULONG size = sizeof(double);
+				((ScpFileObject*)thisObject)->append( size, pdouble);
 			}
 		}
 		else
