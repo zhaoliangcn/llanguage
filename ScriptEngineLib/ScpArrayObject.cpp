@@ -254,8 +254,8 @@ ScpObject * __stdcall ScpArrayObjectFactory(VTPARAMETERS * paramters, CScriptEng
 	std::string arrayobjname = paramters->at(1);
 	if (paramters->size() == 2)
 	{
-		size_t pos1 = arrayobjname.find(scpLeftBracket);
-		size_t pos2 = arrayobjname.find(scpRightBracket);
+		const size_t pos1 = arrayobjname.find(scpLeftBracket);
+		const size_t pos2 = arrayobjname.find(scpRightBracket);
 		if ((pos1 != std::string::npos) && (pos2 != std::string::npos))
 		{
 			std::string arrayname = arrayobjname.substr(0, pos1);
@@ -284,7 +284,7 @@ ScpObject * __stdcall ScpArrayObjectFactory(VTPARAMETERS * paramters, CScriptEng
 			}
 		}
 	}
-	else
+	else if (paramters->size() > 2)
 	{
 		ScpArrayObject * obj = (ScpArrayObject *)engine->GetCurrentObjectSpace()->FindObject(arrayobjname);
 		if (!obj)
@@ -335,7 +335,7 @@ ScpObject * __stdcall ScpArrayObjectFactory(VTPARAMETERS * paramters, CScriptEng
 							elementobj = new ScpStringObject;
 							((ScpStringObject*)elementobj)->content = elementname;
 						}
-						ScpObjectType type = ScpGlobalObject::GetInstance()->GetType(elementtype.c_str());
+						const ScpObjectType type = ScpGlobalObject::GetInstance()->GetType(elementtype.c_str());
 						if (obj->GetSize() == 0)
 						{
 							obj->Elementtype = type;
