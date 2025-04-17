@@ -7,5 +7,6 @@
 #define _H_SCPOBJECTDEFINE
 #include "ScpObject.h"
 BOOL ScpObjectDefine(VTPARAMETERS * vtparameters, CScriptEngine * engine);
+BOOL DefineClassObject(VTPARAMETERS* vtparameters, CScriptEngine* engine);
 #endif //_H_SCPOBJECTDEFINE
 

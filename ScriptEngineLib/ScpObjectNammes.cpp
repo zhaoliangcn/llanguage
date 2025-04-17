@@ -98,6 +98,7 @@ void ScpObjectNames::SelectLanguage(int lang)
 		scpErrorObjectDoNotSupportCommand = scpErrorCnObjectDoNotSupportCommand;
 		scpErrorInvalidArrayElementType = scpErrorCnInvalidArrayElementType ;
 		scpErrorNestClassDefine = scpErrorCnNestClassDefine;
+		scpErrorClassDefineFault = scpErrorCnClassDefineFault;
 		scpErrorInvalidStructDefine = scpErrorCnInvalidStructDefine ;
 		scpErrorImportLibFailure = scpErrorCnImportLibFailure;
 		scpErrorInvalidExpression = scpErrorCnInvalidExpression;
@@ -177,6 +178,7 @@ void ScpObjectNames::SelectLanguage(int lang)
 		scpErrorObjectDoNotSupportCommand = scpErrorEnObjectDoNotSupportCommand;
 		scpErrorInvalidArrayElementType = scpErrorEnInvalidArrayElementType ;
 		scpErrorNestClassDefine = scpErrorEnNestClassDefine;
+		scpErrorClassDefineFault = scpErrorEnClassDefineFault;
 		scpErrorInvalidStructDefine = scpErrorEnInvalidStructDefine ;
 		scpErrorImportLibFailure = scpErrorEnImportLibFailure;
 		scpErrorInvalidExpression = scpErrorEnInvalidExpression;

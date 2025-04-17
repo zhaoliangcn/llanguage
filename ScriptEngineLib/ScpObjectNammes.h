@@ -80,6 +80,7 @@ public:
 	const char * scpErrorObjectDoNotSupportCommand ;
 	const char * scpErrorInvalidArrayElementType ;
 	const char * scpErrorNestClassDefine ;
+	const char * scpErrorClassDefineFault;
 	const char * scpErrorInvalidStructDefine ;
 	const char * scpErrorImportLibFailure ;
 	const char * scpErrorInvalidExpression ;

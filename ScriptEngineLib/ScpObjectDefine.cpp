@@ -497,6 +497,10 @@ BOOL ScpObjectDefine(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 						engine->SetCurrentObjectSpace(&classobj->UserClassObjectSpace);
 					}					
 				}
+				else
+				{
+					engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorClassDefineFault);
+				}
 			}
 			else if (ObjStruct == type)
 			{
@@ -639,4 +643,42 @@ BOOL ScpObjectDefine(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 		engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorInvalidObjectDefine+ Message);
 	}
 	return TRUE;
+}
+BOOL DefineClassObject(VTPARAMETERS* vtparameters, CScriptEngine* engine)
+{
+	BOOL Ret = FALSE;
+	ScpObjectSpace* currentObjectSpace = engine->GetCurrentObjectSpace();
+	//在类的内部和函数的内部不允许定义类
+	if (Space_Global != currentObjectSpace->ObjectSpaceType)
+	{
+		engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorNestClassDefine);
+		return Ret;
+	}
+	//确保参数个数正确
+	if (vtparameters->size() == 2)
+	{
+		std::string &strobjtype = vtparameters->at(0);
+		std::string &classobjname = vtparameters->at(1);
+		ScpGlobalObject::GetInstance()->SelectLanguage(engine->GetLanguge());
+		ScpObjectType type = ScpGlobalObject::GetInstance()->GetType(strobjtype.c_str());
+		//创建类对象，这时候类对象是一个空壳，不包含成员函数
+		ScpClassObject* classobj = new ScpClassObject;
+		if (classobj)
+		{
+			classobj->ClassDefine(classobjname);
+			//将类对象添加到全局名字空间
+			currentObjectSpace->AddObject(classobjname, classobj);
+			//设置类对象的父名字空间
+			classobj->UserClassObjectSpace.parentspace = engine->GetCurrentObjectSpace();
+			//将当前名字空间修改为类的名字空间
+			engine->SetCurrentObjectSpace(&classobj->UserClassObjectSpace);
+
+			Ret = TRUE;
+		}
+	}
+	else
+	{
+		engine->PrintError(ScpObjectNames::GetSingleInsatnce()->scpErrorClassDefineFault);
+	}
+	return Ret;
 }

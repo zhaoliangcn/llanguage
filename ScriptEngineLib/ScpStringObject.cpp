@@ -368,17 +368,17 @@ ScpStringObject* ScpStringObject::Format(ScpStringObject* str1, const char* strF
     const size_t BUFFER_SIZE = 4096;
     char Buffer[BUFFER_SIZE] = {0};
     
-    // Ê¹ÓÃ snprintf ²¢¼ì²é·µ»ØÖµ
+    // ä½¿ç”¨ snprintf å¹¶æ£€æŸ¥è¿”å›žå€¼
     int result = snprintf(Buffer, BUFFER_SIZE, strForm, std::forward<Args>(args)...);
     
     if (result < 0) {
-        // ´¦Àí¸ñÊ½»¯´íÎó
+        // å¤„ç†æ ¼å¼åŒ–é”™è¯¯
         str1->content = "Format error";
     } else if (static_cast<size_t>(result) >= BUFFER_SIZE) {
-        // ´¦Àí»º³åÇøÒç³ö
+        // å¤„ç†ç¼“å†²åŒºæº¢å‡º
         str1->content = "Buffer overflow";
     } else {
-        // ³É¹¦¸ñÊ½»¯
+        // æˆåŠŸæ ¼å¼åŒ–
         str1->content = Buffer;
     }
 

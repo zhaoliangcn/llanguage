@@ -27,7 +27,7 @@ public:
 	VTSTRINGS content;
 
 };
-//字符串数组对象的工厂函数
+//瀛楃涓叉暟缁勫璞＄殑宸ュ巶鍑芥暟
 ScpObject * __stdcall ScpStringArrayObjectFactory(VTPARAMETERS* paramters, CScriptEngine* engine);
 
 #endif //_H_SCPSTRINGARRAYOBJECT
