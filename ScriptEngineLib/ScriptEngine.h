@@ -44,17 +44,6 @@ class ScpObject;
 class CScriptEngine
 {
 public:
-	friend class CScriptCommand;
-	friend class ScpClassObject;
-	friend class ScpFunctionObject;
-	friend class ScpWhileStatementObject;
-	friend class ScpIfStatementObject;
-	friend class ScpExpressionTreeNode;
-	friend class ScpExpressionAnalyser;
-	friend class ScpExpressionBlock;
-	friend class ScpByteCode;
-	friend class ScriptByteCode;
-
 	CScriptEngine();
 	~CScriptEngine();
 	
@@ -156,6 +145,45 @@ public:
 		return currentscriptfilename;;
 	}
 	std::string globallib;
+
+
+	/*
+	指令派发，一行脚本对应一个指令 (Command dispatch, one line of script corresponds to one command)
+	*/
+    BOOL FetchCommand(unsigned long commandvalue,VTPARAMETERS * vtparameters =NULL);
+
+
+	ScpExpressionAnalyser& getExpressionAnalyser()
+	{
+		return ana;
+	}
+
+	int getLanguage()
+	{
+		return language;
+	}
+	ULONG get_usercommand()
+	{
+		return vl_usercommand;
+	}
+	void increment_usercommand()
+	{
+		vl_usercommand++;
+	}
+	ScriptByteCode & getScriptByteCode()
+	{
+		return bytecode;
+	}
+	IScriptDebugger * getDebugger()
+	{
+		return debugger;
+	}
+	std::string & getCurrentScriptFileName()
+	{
+		return currentscriptfilename;
+	}
+	//切换语言 (Switch language)
+	void SwitchLanguage(std::string &comment);
 private:
 	/*
 	创建存储当前命令行参数的表对象 (Create table object to store current command line arguments)
@@ -168,10 +196,7 @@ private:
 	*/
 	void Init();
 	
-	/*
-	指令派发，一行脚本对应一个指令 (Command dispatch, one line of script corresponds to one command)
-	*/
-    BOOL FetchCommand(unsigned long commandvalue,VTPARAMETERS * vtparameters =NULL);
+
 	
 	/*
 	加载脚本 (Load script)
@@ -185,8 +210,7 @@ private:
 
 	//当前语言标记 (Current language flag)
 	int language;
-	//切换语言 (Switch language)
-	void SwitchLanguage(std::string &comment);
+	
 	
 	
 	ULONG vl_usercommand;

@@ -27,7 +27,6 @@ public:
 class ScriptByteCode
 {
 public:
-	friend class CScriptEngine;
 	ScriptByteCode();
 	~ScriptByteCode();
 

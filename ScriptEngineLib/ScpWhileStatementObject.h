@@ -15,7 +15,7 @@ class ScpWhileStatementObject :
 	public ScpObject
 {
 public:
-	friend class CScriptEngine;
+
 
 	ScpWhileStatementObject(CScriptEngine * eg);
 	~ScpWhileStatementObject(void);

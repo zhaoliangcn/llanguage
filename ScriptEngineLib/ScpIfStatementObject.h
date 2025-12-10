@@ -14,7 +14,7 @@ class CScriptEngine;
 class ScpIfStatementObject : public ScpObject
 {
 public:
-    friend class CScriptEngine;  // 声明CScriptEngine为友元类 | Declare CScriptEngine as a friend class
+
     ScpIfStatementObject(CScriptEngine *eg);  // 构造函数 | Constructor
     ~ScpIfStatementObject(void);  // 析构函数 | Destructor
 

@@ -125,7 +125,7 @@ bool ScpExpressionBlock::GenByteCode(CScriptEngine * engine, ByteCodeMemoryStrea
 						}
 
 
-						engine->bytecode.GenByteCodeIfstatement(ifstmtobj->condition_bytecodemem,
+						engine->getScriptByteCode().GenByteCodeIfstatement(ifstmtobj->condition_bytecodemem,
 							ifstmtobj->trueblock_bytecodemem,
 							ifstmtobj->falseblock_bytecodemem,
 							stream);
@@ -147,7 +147,7 @@ bool ScpExpressionBlock::GenByteCode(CScriptEngine * engine, ByteCodeMemoryStrea
 						engine->SetCurrentObjectSpace(&whileobj->WhileStatementObjectSpace);
 						whileobj->whilexpressionblock->GenByteCode(engine, whileobj->whileblock_bytecodemem);
 
-						engine->bytecode.GenByteCodeWhilestatement(whileobj->condition_bytecodemem,
+						engine->getScriptByteCode().GenByteCodeWhilestatement(whileobj->condition_bytecodemem,
 							whileobj->whileblock_bytecodemem,
 							stream);
 
@@ -181,7 +181,7 @@ bool ScpExpressionBlock::GenByteCode(CScriptEngine * engine, ByteCodeMemoryStrea
 	}
 	else
 	{
-		engine->bytecode.GenByteCodeFromCommand(ulcommand, vt_command_parameters, bytecodemem, engine);
+		engine->getScriptByteCode().GenByteCodeFromCommand(ulcommand, vt_command_parameters, bytecodemem, engine);
 		if (ulcommand == vl_define)
 		{
 			engine->FetchCommand(ulcommand, &vt_command_parameters);
@@ -239,9 +239,10 @@ ScpObject * ScpExpressionBlock::Run(CScriptEngine * engine)
 	{
 		if (ulcommand != -1)
 		{
-			if (engine->debugger)
+			IScriptDebugger* debugger = engine->getDebugger();
+			if (debugger)
 			{
-				engine->debugger->CheckDebugEvent(engine->currentscriptfilename.c_str(), linenumber, INFINITE);
+				debugger->CheckDebugEvent(engine->getCurrentScriptFileName().c_str(), linenumber, INFINITE);
 			}
 			engine->FetchCommand(ulcommand, &vt_command_parameters);
 			if (engine->GetCurrentObjectSpace()->lastcommand != vl_return)

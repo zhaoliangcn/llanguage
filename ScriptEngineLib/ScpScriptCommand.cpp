@@ -250,7 +250,7 @@ BOOL CScriptCommand::Do_Return_Command(VTPARAMETERS * vtparameters, CScriptEngin
 			//{
 			//	expression = L"(" + expression + L")";
 			//}
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -275,7 +275,7 @@ BOOL CScriptCommand::Do_Return_Command(VTPARAMETERS * vtparameters, CScriptEngin
 BOOL CScriptCommand::Do_Loop_Command(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 {
 	BOOL bRet = FALSE;
-	ScpObjectSpace * currentObjectSpace = engine->currentObjectSpace;
+	ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
 	if (vtparameters->size() >= 2)
 	{
 		int loopcount = 0;
@@ -311,7 +311,7 @@ BOOL CScriptCommand::Do_Loop_Command(VTPARAMETERS * vtparameters, CScriptEngine 
 				}
 				while (loopcount > 0)
 				{
-					engine->scriptcommand->Do_Call_Command(&vtFuncparameters, engine);
+					Do_Call_Command(&vtFuncparameters, engine);
 					loopcount -= 1;
 				}
 			}
@@ -360,7 +360,7 @@ BOOL CScriptCommand::Do_Private_Command(VTPARAMETERS * vtparameters, CScriptEngi
 */
 BOOL CScriptCommand::Do_Continue_Command(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 {
-	ScpObjectSpace * currentObjectSpace = engine->currentObjectSpace;
+	ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
 	while (currentObjectSpace != NULL)
 	{
 		if (currentObjectSpace->ObjectSpaceType == Space_Function)
@@ -383,7 +383,7 @@ BOOL CScriptCommand::Do_Continue_Command(VTPARAMETERS * vtparameters, CScriptEng
 */
 BOOL CScriptCommand::Do_Break_Command(VTPARAMETERS * vtparameters, CScriptEngine * engine)
 {
-	ScpObjectSpace * currentObjectSpace = engine->currentObjectSpace;
+	ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
 	while (currentObjectSpace != NULL)
 	{
 		if (currentObjectSpace->ObjectSpaceType == Space_Function)
@@ -585,8 +585,8 @@ BOOL CScriptCommand::Do_Register_Command(VTPARAMETERS * vtparameters, CScriptEng
 			{
 				if (funcobj->GetType() == ObjFunction)
 				{
-					engine->globalcommand.RegisterCommand(engine->language, name1, engine->vl_usercommand);
-					engine->vl_usercommand++;
+					engine->globalcommand.RegisterCommand(engine->getLanguage(), name1, engine->get_usercommand());
+					engine->increment_usercommand();
 				}
 			}
 		}
@@ -606,7 +606,7 @@ BOOL CScriptCommand::Do_Register_Command(VTPARAMETERS * vtparameters, CScriptEng
 			if (funcobj)
 			{
 				if (funcobj->GetType() == ObjFunction)
-					engine->globalcommand.RegisterCommand(engine->language, name1, StringToInt(strcommandvalue.c_str()));
+					engine->globalcommand.RegisterCommand(engine->getLanguage(), name1, StringToInt(strcommandvalue.c_str()));
 			}
 		}
 	}
@@ -662,7 +662,7 @@ BOOL CScriptCommand::Do_While_Command(VTPARAMETERS * vtparameters, CScriptEngine
 		BOOL bRet = FALSE;
 		do
 		{
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -718,7 +718,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 				exp = strobj2->content;
 			}			
 			DebugUtil::TraceW(L"Compute Enter expression %s", exp.c_str());
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(exp);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(exp);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -746,7 +746,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 					expression = strobj1->content;
 				}
 				DebugUtil::TraceW(L"Compute Enter expression %s", expression.c_str());
-				ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+				ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 				if (root)
 				{
 					ScpObject * retobj = root->CalculateEx(engine);
@@ -775,7 +775,7 @@ BOOL CScriptCommand::Do_Compute_Command(VTPARAMETERS * vtparameters, CScriptEngi
 				expression = strobj1->content;
 			}
 			//DebugUtil::TraceW(L"Compute Enter expression %s", expression.c_str());
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ScpObject * retobj = root->CalculateEx(engine);
@@ -1177,7 +1177,7 @@ BOOL  CScriptCommand::Do_Test_Command(VTPARAMETERS * vtparameters, CScriptEngine
 				expression = strobjexpression->content;
 			}
 		}
-		ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+		ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 		if (root)
 		{
 			ScpObject * retobj = root->CalculateEx(engine);
@@ -1287,7 +1287,8 @@ BOOL CScriptCommand::Do_End_Command(VTPARAMETERS * vtparameters, CScriptEngine *
 					ScpWhileStatementObject * whileobj = (ScpWhileStatementObject *)currentObjectSpace->belongto;
 					engine->SetCurrentObjectSpace(whileobj->WhileStatementObjectSpace.parentspace);
 					whileobj->Do(engine);
-					engine->currentObjectSpace->EraseObject(whileobj->Name);
+					ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+					currentObjectSpace->EraseObject(whileobj->Name);
 					ret = TRUE;
 				}
 				else
@@ -1310,8 +1311,9 @@ BOOL CScriptCommand::Do_End_Command(VTPARAMETERS * vtparameters, CScriptEngine *
 			{
 				DebugUtil::TraceW(L"End Enter");				
 				ifstmtobj->Do(engine);					
-				engine->SetCurrentObjectSpace(ifstmtobj->IfStatementObjectSpace.parentspace);				
-				engine->currentObjectSpace->EraseObject(ifstmtobj->Name);
+				engine->SetCurrentObjectSpace(ifstmtobj->IfStatementObjectSpace.parentspace);	
+				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+				currentObjectSpace->EraseObject(ifstmtobj->Name);
 			}
 		}
 		else if (currentObjectSpace->ObjectSpaceType == Space_Struct)

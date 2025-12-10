@@ -102,7 +102,7 @@ int ScpIfStatementObject::ReComputeCondition()
 				//需要优化，这里每次都对条件表达式进行重新解析
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();//IfStatementObjectSpace.parentspace;	
 				
-				ScpExpressionTreeNode *	ConditionExpressionroot= engine->ana.BuildExpressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot= engine->getExpressionAnalyser().BuildExpressionTreeEx(ConditionExpression);
 				if(ConditionExpressionroot)
 				{
 					ScpObject * retobj= ConditionExpressionroot->CalculateEx(engine);
@@ -134,25 +134,25 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 {
 	std::string name = "tempif";
 	ULONG idif;
-	idif = engine->bytecode.resourcepool->scpFindResource(name);
+	idif = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 	while (idif != -1)
 	{
 		name +="0";
-		idif = engine->bytecode.resourcepool->scpFindResource(name);
+		idif = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 	}
 	if (idif == -1)
 	{
-		idif = engine->bytecode.resourcepool->AppendResource(name);
+		idif = engine->getScriptByteCode().resourcepool->AppendResource(name);
 		ByteCodeMemoryStream stream;
-		engine->bytecode.GetByteCodeInitRes(name, stream, idif);
-		engine->bytecode.bytecodemem->AppendByteCode(&stream);
+		engine->getScriptByteCode().GetByteCodeInitRes(name, stream, idif);
+		engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 		stream.Release();
 
 		VTPARAMETERS param;
 		param.push_back("int");
 		param.push_back(name);
-		engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
-		engine->bytecode.bytecodemem->AppendByteCode(&stream);
+		engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
+		engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 		stream.Release();
 	}
 	if (!ConditionExpression.empty())
@@ -161,7 +161,7 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 		{
 			ConditionResult = 1;
 			ByteCodeMemoryStream stream;
-			engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idif, residone, stream);
+			engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idif, residone, stream);
 			condition_bytecodemem.AppendByteCode(&stream);
 			stream.Release();
 		}
@@ -177,7 +177,7 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 				else if (ConditionResult == 0)
 					resid = residzero;
 				ByteCodeMemoryStream stream;
-				engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idif, resid, stream);
+				engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idif, resid, stream);
 				condition_bytecodemem.AppendByteCode(&stream);
 				stream.Release();
 			}
@@ -186,7 +186,7 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 				//需要优化，这里每次都对条件表达式进行重新解析
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();//IfStatementObjectSpace.parentspace;	
 				
-				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExpressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot = engine->getExpressionAnalyser().BuildExpressionTreeEx(ConditionExpression);
 				if (ConditionExpressionroot)
 				{
 					ByteCodeMemoryStream stream;
@@ -197,8 +197,8 @@ bool ScpIfStatementObject::MakeConditionByteCode()
 					ConditionResult = ((ScpIntObject*)retobj)->value;
 
 					name = engine->GetCurrentObjectSpace()->GetObjectNameR(retobj);
-					ULONG idret = engine->bytecode.resourcepool->scpFindResource(name);
-					engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idif, idret, stream);
+					ULONG idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
+					engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idif, idret, stream);
 					condition_bytecodemem.AppendByteCode(&stream);
 					stream.Release();
 					

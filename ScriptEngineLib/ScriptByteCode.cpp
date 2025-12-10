@@ -92,7 +92,8 @@ bool ScriptByteCode::GenByteCodeFromCommand(const unsigned int & commandvalue, V
 			ObjTime == type)
 		{
 			GenByteCodeObjectDefine(type, vtparameters, memstream);
-			if(engine->currentObjectSpace->ObjectSpaceType!=Space_Global)
+			ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+			if(currentObjectSpace->ObjectSpaceType!=Space_Global)
 				engine->FetchCommand(commandvalue, &vtparameters);
 		}
 		else if (ObjFunction == type)
@@ -110,7 +111,8 @@ bool ScriptByteCode::GenByteCodeFromCommand(const unsigned int & commandvalue, V
 			{
 				type = ObjClassInstance;
 				GenByteCodeClassInstanceDefine(type, vtparameters, memstream);
-				if (engine->currentObjectSpace->ObjectSpaceType != Space_Global)
+				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+				if (currentObjectSpace->ObjectSpaceType != Space_Global)
 					engine->FetchCommand(commandvalue, &vtparameters);
 			}
 
@@ -989,7 +991,7 @@ bool ScriptByteCode::GetByteCodeCompute(VTPARAMETERS & vtparameters, ByteCodeMem
 			expression = ((ScpStringObject*)obj2)->content;
 		}
 		
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ByteCodeMemoryStream stream;
@@ -1062,7 +1064,7 @@ bool ScriptByteCode::GenByteCodeReturn(VTPARAMETERS & vtparameters, ByteCodeMemo
 			}
 		}
 		
-			ScpExpressionTreeNode *root = engine->ana.BuildExpressionTreeEx(expression);
+			ScpExpressionTreeNode *root = engine->getExpressionAnalyser().BuildExpressionTreeEx(expression);
 			if (root)
 			{
 				ByteCodeMemoryStream stream;

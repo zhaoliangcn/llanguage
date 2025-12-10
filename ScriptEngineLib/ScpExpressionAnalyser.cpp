@@ -491,9 +491,9 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 				std::string name = objectSpace->GetObjectNameR(tempobjLeft);
 				if (!name.empty())
 				{
-					ULONG idleft = engine->bytecode.resourcepool->scpFindResource(name);
+					ULONG idleft = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 					ByteCodeMemoryStream stream;
-					engine->bytecode.GenByteCodeUnaryOp(op, idleft, stream);
+					engine->getScriptByteCode().GenByteCodeUnaryOp(op, idleft, stream);
 					memstream.AppendByteCode(&stream);
 				}
 			}
@@ -508,7 +508,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 			{
 
 				std::string name = objectSpace->GetObjectNameR(tempobjLeft);		
-				ULONG idleft = engine->bytecode.resourcepool->scpFindResource(name);
+				ULONG idleft = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 				if (name.empty())
 				{
 					if (tempobjLeft->GetType() == ObjInt)
@@ -557,18 +557,18 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 						{
 							std::string lname = "tempint";
 							lname += IntToString(((ScpIntObject*)tempobjLeft)->value);
-							idleft = engine->bytecode.resourcepool->AppendResource(lname);
+							idleft = engine->getScriptByteCode().resourcepool->AppendResource(lname);
 							ByteCodeMemoryStream stream;
-							engine->bytecode.GetByteCodeInitRes(lname, stream, idleft);
-							engine->bytecode.bytecodemem->AppendByteCode(&stream);
+							engine->getScriptByteCode().GetByteCodeInitRes(lname, stream, idleft);
+							engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 							stream.Release();
 
 							VTPARAMETERS param;
 							param.push_back("int");
 							param.push_back(lname);
 							param.push_back(IntToString(((ScpIntObject*)tempobjLeft)->value));
-							engine->bytecode.GenByteCodeObjectDefine(tempobjLeft->GetType(), param, stream);
-							engine->bytecode.bytecodemem->AppendByteCode(&stream);
+							engine->getScriptByteCode().GenByteCodeObjectDefine(tempobjLeft->GetType(), param, stream);
+							engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 							stream.Release();
 						}
 					}
@@ -576,17 +576,17 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 				
 				if (idleft == -1)
 				{
-					idleft = engine->bytecode.resourcepool->AppendResource(name);
+					idleft = engine->getScriptByteCode().resourcepool->AppendResource(name);
 					ByteCodeMemoryStream stream;
-					engine->bytecode.GetByteCodeInitRes(name, stream, idleft);
-					engine->bytecode.bytecodemem->AppendByteCode(&stream);
+					engine->getScriptByteCode().GetByteCodeInitRes(name, stream, idleft);
+					engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 					stream.Release();
 
 					VTPARAMETERS param;
 					param.push_back("int");
 					param.push_back(name);
-					engine->bytecode.GenByteCodeObjectDefine(tempobjLeft->GetType(), param, stream);
-					engine->bytecode.bytecodemem->AppendByteCode(&stream);
+					engine->getScriptByteCode().GenByteCodeObjectDefine(tempobjLeft->GetType(), param, stream);
+					engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 					stream.Release();
 				}
 				name = objectSpace->GetObjectNameR(tempobjRight);				
@@ -597,20 +597,20 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 				}
 				else
 				{
-					idright = engine->bytecode.resourcepool->scpFindResource(name);
+					idright = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 					if (idright == -1)
 					{
-						idright = engine->bytecode.resourcepool->AppendResource(name);
+						idright = engine->getScriptByteCode().resourcepool->AppendResource(name);
 						ByteCodeMemoryStream stream;
-						engine->bytecode.GetByteCodeInitRes(name, stream, idright);
-						engine->bytecode.bytecodemem->AppendByteCode(&stream);
+						engine->getScriptByteCode().GetByteCodeInitRes(name, stream, idright);
+						engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 						stream.Release();
 
 						VTPARAMETERS param;
 						param.push_back("int");
 						param.push_back(name);
-						engine->bytecode.GenByteCodeObjectDefine(tempobjRight->GetType(), param, stream);
-						engine->bytecode.bytecodemem->AppendByteCode(&stream);
+						engine->getScriptByteCode().GenByteCodeObjectDefine(tempobjRight->GetType(), param, stream);
+						engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 						stream.Release();
 					}
 				}
@@ -681,10 +681,10 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 
 										
 					ByteCodeMemoryStream stream;
-					engine->bytecode.GetByteCodeBinaryOp(op, -1, idleft, idright, stream);
+					engine->getScriptByteCode().GetByteCodeBinaryOp(op, -1, idleft, idright, stream);
 					memstream.AppendByteCode(&stream);
 					//if (engine->GetCurrentObjectSpace()->ObjectSpaceType == Space_Global)
-					//	engine->bytecode.bytecodemem->AppendByteCode(&stream);
+					//	engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 					//else
 					//	memstream.AppendByteCode(&stream);
 					stream.Release();
@@ -843,9 +843,9 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 						ULONG idret =GenTempObjectByteCode(numvalue, name, engine,true);
 
 						ByteCodeMemoryStream stream;
-						engine->bytecode.GetByteCodeBinaryOp(op, idret, idleft, idright, stream);
+						engine->getScriptByteCode().GetByteCodeBinaryOp(op, idret, idleft, idright, stream);
 						if (engine->GetCurrentObjectSpace()->ObjectSpaceType == Space_Global)
-							engine->bytecode.bytecodemem->AppendByteCode(&stream);
+							engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 						else
 							memstream.AppendByteCode(&stream);
 						stream.Release();						
@@ -893,7 +893,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodeStack(CScriptEngine * engine, Byt
 						
 
 						ByteCodeMemoryStream stream;
-						engine->bytecode.GenByteCodeCallInner(name, InnerFunctionName, vtFuncparameters, stream,engine);
+						engine->getScriptByteCode().GenByteCodeCallInner(name, InnerFunctionName, vtFuncparameters, stream,engine);
 						memstream.AppendByteCode(&stream);
 						stream.Release();
 
@@ -944,13 +944,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 
 			std::string objname = objectSpace->GetObjectNameR(nodeobject);
 
-			ULONG idobject = engine->bytecode.resourcepool->scpFindResource(objname);
+			ULONG idobject = engine->getScriptByteCode().resourcepool->scpFindResource(objname);
 			if (idobject == -1)
 			{
-				idobject = engine->bytecode.resourcepool->AppendResource(objname);
+				idobject = engine->getScriptByteCode().resourcepool->AppendResource(objname);
 				ByteCodeMemoryStream stream;
-				engine->bytecode.GetByteCodeInitRes(objname, stream, idobject);
-				engine->bytecode.bytecodemem->AppendByteCode(&stream);
+				engine->getScriptByteCode().GetByteCodeInitRes(objname, stream, idobject);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 				stream.Release();
 				std::string type_name = "int";
 				type_name = ScpGlobalObject::GetInstance()->GetTypeName(objectSpace->GetType(objname));
@@ -966,17 +966,17 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 				{
 					param.push_back(objectSpace->FindObject(objname)->ToString());
 				}
-				engine->bytecode.GenByteCodeObjectDefine(nodeobject->GetType(), param, stream);
-				engine->bytecode.bytecodemem->AppendByteCode(&stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(nodeobject->GetType(), param, stream);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 				stream.Release();
 			}
-			ULONG idfunc = engine->bytecode.resourcepool->scpFindResource(InnerFunctionName);
+			ULONG idfunc = engine->getScriptByteCode().resourcepool->scpFindResource(InnerFunctionName);
 			if (idfunc == -1)
 			{
-				idfunc = engine->bytecode.resourcepool->AppendResource(InnerFunctionName);
+				idfunc = engine->getScriptByteCode().resourcepool->AppendResource(InnerFunctionName);
 				ByteCodeMemoryStream stream;
-				engine->bytecode.GetByteCodeInitRes(InnerFunctionName, stream, idfunc);
-				engine->bytecode.bytecodemem->AppendByteCode(&stream);
+				engine->getScriptByteCode().GetByteCodeInitRes(InnerFunctionName, stream, idfunc);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 				stream.Release();
 
 			}
@@ -1015,7 +1015,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 								{
 									//这里需要考虑函数的参数是表达式的情况
 									std::string Expression = vtFuncparameters.at(i);
-									ULONG residexp = engine->bytecode.resourcepool->scpFindResource(Expression);
+									ULONG residexp = engine->getScriptByteCode().resourcepool->scpFindResource(Expression);
 									ULONG residname;
 									if (residexp == -1)
 									{
@@ -1024,24 +1024,24 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 										if (IsStaticNumber(Expression))
 										{
 											std::string name = "tempint";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											while (residname != -1)
 											{
 												name += "0";
-												residname = engine->bytecode.resourcepool->scpFindResource(name);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											}
-											residname = engine->bytecode.resourcepool->AppendResource(name);
+											residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-											engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 
 											param.push_back("int");
 											param.push_back(name);
 											param.push_back(Expression);
-											engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+											engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 											
 											ScpObject * tempobj = new ScpIntObject;
@@ -1054,24 +1054,24 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 										else if (IsStaticString(Expression))
 										{
 											std::string name = "tempstring";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											while (residname != -1)
 											{
 												name += "0";
-												residname = engine->bytecode.resourcepool->scpFindResource(name);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											}
-											residname = engine->bytecode.resourcepool->AppendResource(name);
+											residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-											engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 
 											param.push_back("string");
 											param.push_back(name);
 											param.push_back(Expression);
-											engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+											engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 											ScpObject * tempobj = new ScpStringObject;
 											tempobj->istemp = true;
@@ -1096,13 +1096,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{												
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj0 = new ScpIntObject();
@@ -1121,13 +1121,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj1 = new ScpIntObject();
@@ -1146,13 +1146,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj2 = new ScpIntObject();
@@ -1171,13 +1171,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj3 = new ScpIntObject();
@@ -1196,13 +1196,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj4 = new ScpIntObject();
@@ -1221,13 +1221,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj5 = new ScpIntObject();
@@ -1246,13 +1246,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj6 = new ScpIntObject();
@@ -1271,13 +1271,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj7 = new ScpIntObject();
@@ -1296,13 +1296,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj8 = new ScpIntObject();
@@ -1321,13 +1321,13 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 											}
 											else
 											{
-												residname = engine->bytecode.resourcepool->scpFindResource(numname);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(numname);
 												if (residname == -1)
 												{
-													residname = engine->bytecode.resourcepool->AppendResource(numname);
+													residname = engine->getScriptByteCode().resourcepool->AppendResource(numname);
 												}
-												engine->bytecode.GetByteCodeInitRes(numname, stream, residname);
-												engine->bytecode.bytecodemem->AppendByteCode(&stream);
+												engine->getScriptByteCode().GetByteCodeInitRes(numname, stream, residname);
+												engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 												stream.Release();
 
 												ScpIntObject * obj9 = new ScpIntObject();
@@ -1339,48 +1339,48 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 										else if (IsStaticNumber(Expression))
 										{
 											std::string name = "tempint";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											while (residname != -1)
 											{
 												name += "0";
-												residname = engine->bytecode.resourcepool->scpFindResource(name);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											}
-											residname = engine->bytecode.resourcepool->AppendResource(name);
+											residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-											engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 
 											param.push_back("int");
 											param.push_back(name);
 											param.push_back(Expression);
-											engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+											engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 											func->RealParameters.push_back(name);
 										}
 										else if (IsStaticString(Expression))
 										{
 											std::string name ="tempstring";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											while (residname != -1)
 											{
 												name += "0";
-												residname = engine->bytecode.resourcepool->scpFindResource(name);
+												residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 											}
-											residname = engine->bytecode.resourcepool->AppendResource(name);
+											residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-											engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 
 											param.push_back("string");
 											param.push_back(name);
 											param.push_back(Expression);
-											engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+											engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 
-											engine->bytecode.bytecodemem->AppendByteCode(&stream);
+											engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 											stream.Release();
 											func->RealParameters.push_back(name);
 										}
@@ -1404,10 +1404,10 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 
 								ByteCodeMemoryStream stream;
 								func->functionexpressionblock->GenByteCode(engine, stream);
-								engine->bytecode.GenByteCodeFunctionBody(stream);
+								engine->getScriptByteCode().GenByteCodeFunctionBody(stream);
 								func->bytecodemem_funcbody.AppendByteCode(&stream);
-								engine->bytecode.bytecodemem->AppendByteCode(&func->bytecodemem_funcdef);
-								engine->bytecode.bytecodemem->AppendByteCode(&func->bytecodemem_funcbody);
+								engine->getScriptByteCode().bytecodemem->AppendByteCode(&func->bytecodemem_funcdef);
+								engine->getScriptByteCode().bytecodemem->AppendByteCode(&func->bytecodemem_funcbody);
 
 							}
 						}
@@ -1429,7 +1429,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 							{
 								//这里需要考虑函数的参数是表达式的情况
 								std::string Expression = vtFuncparameters.at(i);
-								ULONG residexp = engine->bytecode.resourcepool->scpFindResource(Expression);
+								ULONG residexp = engine->getScriptByteCode().resourcepool->scpFindResource(Expression);
 								ULONG residname;
 								if (residexp == -1)
 								{
@@ -1438,47 +1438,47 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 									if (IsStaticNumber(Expression))
 									{
 										std::string name = "tempint";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 										while (residname != -1)
 										{
 											name += "0";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 										}
-										residname = engine->bytecode.resourcepool->AppendResource(name);
+										residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-										engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-										engine->bytecode.bytecodemem->AppendByteCode(&stream);
+										engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+										engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 										stream.Release();
 
 										param.push_back("int");
 										param.push_back(name);
 										param.push_back(Expression);
-										engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+										engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 
-										engine->bytecode.bytecodemem->AppendByteCode(&stream);
+										engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 										stream.Release();
 									}
 									else if (IsStaticString(Expression))
 									{
 										std::string name = "tempstring";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 										while (residname != -1)
 										{
 											name += "0";
-											residname = engine->bytecode.resourcepool->scpFindResource(name);
+											residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 										}
-										residname = engine->bytecode.resourcepool->AppendResource(name);
+										residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-										engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-										engine->bytecode.bytecodemem->AppendByteCode(&stream);
+										engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+										engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 										stream.Release();
 
 										param.push_back("string");
 										param.push_back(name);
 										param.push_back(Expression);
-										engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+										engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 
-										engine->bytecode.bytecodemem->AppendByteCode(&stream);
+										engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 										stream.Release();
 									}
 
@@ -1500,7 +1500,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 						{
 							//这里需要考虑函数的参数是表达式的情况
 							std::string Expression = vtFuncparameters.at(i);
-							ULONG residexp = engine->bytecode.resourcepool->scpFindResource(Expression);
+							ULONG residexp = engine->getScriptByteCode().resourcepool->scpFindResource(Expression);
 							ULONG residname;
 							if (residexp == -1)
 							{
@@ -1509,47 +1509,47 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 								if (IsStaticNumber(Expression))
 								{
 									std::string name = "tempint";
-									residname = engine->bytecode.resourcepool->scpFindResource(name);
+									residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									while (residname != -1)
 									{
 										name += "0";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									}
-									residname = engine->bytecode.resourcepool->AppendResource(name);
+									residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-									engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 
 									param.push_back("int");
 									param.push_back(name);
 									param.push_back(Expression);
-									engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+									engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 									vtFuncparameters.at(i) = name;
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 								}
 								else if (IsStaticString(Expression))
 								{
 									std::string name = "tempstring";
-									residname = engine->bytecode.resourcepool->scpFindResource(name);
+									residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									while (residname != -1)
 									{
 										name += "0";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									}
-									residname = engine->bytecode.resourcepool->AppendResource(name);
+									residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-									engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 
 									param.push_back("string");
 									param.push_back(name);
 									param.push_back(Expression);
-									engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+									engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 									vtFuncparameters.at(i) = name;
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 								}
 
@@ -1559,7 +1559,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 				}
 			}
 			ByteCodeMemoryStream stream;
-			engine->bytecode.GenByteCodeCallInner(objname, InnerFunctionName, vtFuncparameters, stream, engine);
+			engine->getScriptByteCode().GenByteCodeCallInner(objname, InnerFunctionName, vtFuncparameters, stream, engine);
 			memstream.AppendByteCode(&stream);
 			stream.Release();
 			if (engine->GetCurrentObjectSpace()->ObjectSpaceType == Space_If)
@@ -1603,7 +1603,7 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 
 							//这里需要考虑函数的参数是表达式的情况
 							std::string Expression = vtFuncparameters.at(i);
-							ULONG residexp = engine->bytecode.resourcepool->scpFindResource(vtFuncparameters.at(i));
+							ULONG residexp = engine->getScriptByteCode().resourcepool->scpFindResource(vtFuncparameters.at(i));
 							ULONG residname;
 							if (residexp == -1)
 							{
@@ -1612,24 +1612,24 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 								if (IsStaticNumber(Expression))
 								{
 									std::string name = "tempint";
-									residname = engine->bytecode.resourcepool->scpFindResource(name);
+									residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									while (residname != -1)
 									{
 										name += "0";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									}
-									residname = engine->bytecode.resourcepool->AppendResource(name);
+									residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-									engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 
 									param.push_back("int");
 									param.push_back(name);
 									param.push_back(Expression);
-									engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+									engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 									func->RealParameters.push_back(name);
 
@@ -1645,24 +1645,24 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 								else if (IsStaticString(Expression))
 								{
 									std::string name = "tempstring";
-									residname = engine->bytecode.resourcepool->scpFindResource(name);
+									residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									while (residname != -1)
 									{
 										name += "0";
-										residname = engine->bytecode.resourcepool->scpFindResource(name);
+										residname = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 									}
-									residname = engine->bytecode.resourcepool->AppendResource(name);
+									residname = engine->getScriptByteCode().resourcepool->AppendResource(name);
 
-									engine->bytecode.GetByteCodeInitRes(name, stream, residname);
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().GetByteCodeInitRes(name, stream, residname);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 
 									param.push_back("string");
 									param.push_back(name);
 									param.push_back(Expression);
-									engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+									engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 
-									engine->bytecode.bytecodemem->AppendByteCode(&stream);
+									engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 									stream.Release();
 									func->RealParameters.push_back(name);
 
@@ -1699,16 +1699,16 @@ ScpObject * ScpExpressionTreeNode::MakeByteCodePerformFunctionCall(CScriptEngine
 						gencode = 1;
 						ByteCodeMemoryStream stream;
 						func->functionexpressionblock->GenByteCode(engine, stream);
-						engine->bytecode.GenByteCodeFunctionBody(stream);
+						engine->getScriptByteCode().GenByteCodeFunctionBody(stream);
 						func->bytecodemem_funcbody.AppendByteCode(&stream);
 
-						engine->bytecode.bytecodemem->AppendByteCode(&func->bytecodemem_funcdef);
-						engine->bytecode.bytecodemem->AppendByteCode(&func->bytecodemem_funcbody);
+						engine->getScriptByteCode().bytecodemem->AppendByteCode(&func->bytecodemem_funcdef);
+						engine->getScriptByteCode().bytecodemem->AppendByteCode(&func->bytecodemem_funcbody);
 
 					}
 
 					ByteCodeMemoryStream stream;
-					engine->bytecode.GenByteCodeCallFunc(objname, param, stream);
+					engine->getScriptByteCode().GenByteCodeCallFunc(objname, param, stream);
 					memstream.AppendByteCode(&stream);
 					stream.Release();
 					if (gencode==0)
@@ -1792,71 +1792,71 @@ ULONG ScpExpressionTreeNode::GenTempObjectByteCode(ScpObject* obj, std::string &
 					idret = residnine;
 				}
 				name = "tempint";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 				while (idret != -1)
 				{
 					name += "0";
-					idret = engine->bytecode.resourcepool->scpFindResource(name);
+					idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 				}
 			}			
 			else
 			{
 				//说明是即将被赋值的返回值，不适用预置小整数资源
 				name = "tempint";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 				while (idret != -1)
 				{
 					name += "0";
-					idret = engine->bytecode.resourcepool->scpFindResource(name);
+					idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 				}
 			}			
 		}
 		else if (obj->GetType() == ObjString)
 		{
 			name = "tempstring";
-			idret = engine->bytecode.resourcepool->scpFindResource(name);
+			idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			while (idret != -1)
 			{
 				name += "0";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			}
 		}
 		else if (obj->GetType() == ObjDouble)
 		{
 			name = "tempdouble";
-			idret = engine->bytecode.resourcepool->scpFindResource(name);
+			idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			while (idret != -1)
 			{
 				name += "0";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			}
 		}
 		else if (obj->GetType() == ObjBigInt)
 		{
 			name = "tempbigint";
-			idret = engine->bytecode.resourcepool->scpFindResource(name);
+			idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			while (idret != -1)
 			{
 				name += "0";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			}
 		}
 		else if (obj->GetType() == ObjTable)
 		{
 			name = "temptable";
-			idret = engine->bytecode.resourcepool->scpFindResource(name);
+			idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			while (idret != -1)
 			{
 				name += "0";
-				idret = engine->bytecode.resourcepool->scpFindResource(name);
+				idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 			}
 		}
 		if (idret == -1)
 		{
-			idret = engine->bytecode.resourcepool->AppendResource(name);
+			idret = engine->getScriptByteCode().resourcepool->AppendResource(name);
 			ByteCodeMemoryStream stream;
-			engine->bytecode.GetByteCodeInitRes(name, stream, idret);
-			engine->bytecode.bytecodemem->AppendByteCode(&stream);
+			engine->getScriptByteCode().GetByteCodeInitRes(name, stream, idret);
+			engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 			stream.Release();
 			VTPARAMETERS param;
 			if (obj->GetType() == ObjInt)
@@ -1874,27 +1874,27 @@ ULONG ScpExpressionTreeNode::GenTempObjectByteCode(ScpObject* obj, std::string &
 			if (obj->GetType() == ObjInt)
 			{
 				param.push_back(obj->ToString());
-				engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
 			}
 			else if (obj->GetType() == ObjString)
 			{
 				param.push_back(obj->ToString());
-				engine->bytecode.GenByteCodeObjectDefine(ObjString, param, stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(ObjString, param, stream);
 			}				
 			else if (obj->GetType() == ObjDouble)
 			{
 				param.push_back(obj->ToString());
-				engine->bytecode.GenByteCodeObjectDefine(ObjDouble, param, stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(ObjDouble, param, stream);
 			}				
 			else if (obj->GetType() == ObjBigInt)
 			{
 				param.push_back(obj->ToString());
-				engine->bytecode.GenByteCodeObjectDefine(ObjBigInt, param, stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(ObjBigInt, param, stream);
 
 			}				
 			else if (obj->GetType() == ObjTable)
-				engine->bytecode.GenByteCodeObjectDefine(ObjTable, param, stream);
-			engine->bytecode.bytecodemem->AppendByteCode(&stream);
+				engine->getScriptByteCode().GenByteCodeObjectDefine(ObjTable, param, stream);
+			engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 			stream.Release();
 
 
@@ -1933,7 +1933,7 @@ ScpObject * ScpExpressionTreeNode::PerformFunctionCall(CScriptEngine * engine)
 		{
 			if (vtFuncparameters.size() > 0)
 			{
-				engine->scriptcommand->Do_Call_Command(&vtFuncparameters, engine);
+				CScriptCommand::Do_Call_Command(&vtFuncparameters, engine);
 				retobj = ((ScpFunctionObject *)nodeobject)->Result;
 			}
 			else
@@ -1946,7 +1946,7 @@ ScpObject * ScpExpressionTreeNode::PerformFunctionCall(CScriptEngine * engine)
 			if (vtFuncparameters.size() > 0)
 			{
 				vtFuncparameters.insert(vtFuncparameters.begin(), str_EN_ObjCFunction);
-				engine->scriptcommand->Do_Call_Command(&vtFuncparameters, engine);
+				CScriptCommand::Do_Call_Command(&vtFuncparameters, engine);
 				//retobj = ((ScpFunctionObject*)nodeobject)->Result;
 			}
 			else
@@ -2483,9 +2483,10 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 	//当前正在定义一个类
 	std::string & wcommandline = ScriptBody.at(currentcommandline);
 	//首先检测调试断点
-	if (engine->debugger)
+	IScriptDebugger* debugger = engine->getDebugger();
+	if (debugger)
 	{
-		engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+		debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
@@ -2501,7 +2502,7 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 	if (engine->Jit)
 	{
 		ByteCodeMemoryStream stream;
-		engine->bytecode.GenByteCodeFromCommand(value, vtparameters, stream, engine);
+		engine->getScriptByteCode().GenByteCodeFromCommand(value, vtparameters, stream, engine);
 		classobj->bytecodeclassdef.AppendByteCode(&stream);
 		stream.Release();
 	}
@@ -2568,7 +2569,7 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 			if (value != vl_end)
 			{
 				ByteCodeMemoryStream memstream;
-				engine->bytecode.GenByteCodeFromCommand(value, vtparameters, memstream, engine);
+				engine->getScriptByteCode().GenByteCodeFromCommand(value, vtparameters, memstream, engine);
 				classobj->bytecodeclassbody.AppendByteCode(memstream.membuf, memstream.codelength);
 				memstream.Release();
 			}
@@ -2576,14 +2577,15 @@ bool ScpExpressionAnalyser::ParseClassDefine(const char * ScriptFile, VTSTRINGS 
 			{
 				//这里不要生成类的字节码
 				//等到首次访问类成员函数的时候再生成
-				engine->bytecode.bytecodemem->AppendByteCode(&classobj->bytecodeclassdef);
-				engine->bytecode.bytecodemem->AppendByteCode(&classobj->bytecodeclassbody);
-				engine->bytecode.bytecodemem->AppendByteCode((unsigned char*)&BC_END, 1);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode(&classobj->bytecodeclassdef);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode(&classobj->bytecodeclassbody);
+				engine->getScriptByteCode().bytecodemem->AppendByteCode((unsigned char*)&BC_END, 1);
 			}
 		}
-		if (engine->debugger)
+		IScriptDebugger* debugger = engine->getDebugger();
+		if (debugger)
 		{
-			engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+			debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 		}
 		//类成员对象的定义
 		engine->FetchCommand(value, &vtparameters);
@@ -2606,9 +2608,10 @@ bool ScpExpressionAnalyser::ParseStructDefine(const char * ScriptFile, VTSTRINGS
 {
 	bool bret = true;
 	std::string & wcommandline = ScriptBody.at(currentcommandline);
-	if (engine->debugger)
+	IScriptDebugger* debugger = engine->getDebugger();
+	if (debugger)
 	{
-		engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+		debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
@@ -2640,9 +2643,10 @@ bool ScpExpressionAnalyser::ParseStructDefine(const char * ScriptFile, VTSTRINGS
 			bret = false;
 			break;
 		}
-		if (engine->debugger)
+		
+		if (debugger)
 		{
-			engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+			debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 		}
 		structobj->Boday.push_back(wcommandline);
 		engine->FetchCommand(value, &vtparameters);
@@ -2662,9 +2666,10 @@ bool ScpExpressionAnalyser::ParseFunctionDefine(const char * ScriptFile, VTSTRIN
 	bool bret = true;
 	int const functionstartline = currentcommandline;
 	std::string & wcommandline = ScriptBody.at(currentcommandline);
-	if (engine->debugger)
+	IScriptDebugger* debugger = engine->getDebugger();
+	if (debugger)
 	{
-		engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+		debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
@@ -2693,7 +2698,7 @@ bool ScpExpressionAnalyser::ParseFunctionDefine(const char * ScriptFile, VTSTRIN
 					func->parentobjectname = currentObjectSpace->GetObjectNameR(func->ParenObject);
 				}
 				ByteCodeMemoryStream stream;
-				engine->bytecode.GenByteCodeFromCommand(value, vtparameters, stream, engine);
+				engine->getScriptByteCode().GenByteCodeFromCommand(value, vtparameters, stream, engine);
 				func->bytecodemem_funcdef.AppendByteCode(&stream);
 				stream.Release();
 				
@@ -2785,9 +2790,10 @@ ScpObject *  ScpExpressionAnalyser::ParseWhileDefine(const char * ScriptFile, VT
 {
 	ScpObject *  obj = NULL;
 	std::string & wcommandline = ScriptBody.at(currentcommandline);
-	if (engine->debugger &&  doimmediately)
+	IScriptDebugger* debugger = engine->getDebugger();
+	if (debugger &&  doimmediately)
 	{
-		engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+		debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
@@ -2814,9 +2820,9 @@ ScpObject *  ScpExpressionAnalyser::ParseWhileDefine(const char * ScriptFile, VT
 			break;
 		}
 		std::string & wcommandline = ScriptBody.at(currentcommandline);
-		if (engine->debugger && doimmediately)
+		if (debugger && doimmediately)
 		{
-			engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+			debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 		}
 		ULONG value;
 		VTPARAMETERS vtparameters;
@@ -2846,7 +2852,7 @@ ScpObject *  ScpExpressionAnalyser::ParseWhileDefine(const char * ScriptFile, VT
 				whileobj->MakeConditionByteCode();
 				whileobj->whilexpressionblock->GenByteCode(engine, whileobj->whileblock_bytecodemem);
 				
-				engine->bytecode.GenByteCodeWhilestatement(whileobj->condition_bytecodemem,
+				engine->getScriptByteCode().GenByteCodeWhilestatement(whileobj->condition_bytecodemem,
 					whileobj->whileblock_bytecodemem,
 					stream);
 			}
@@ -2864,7 +2870,7 @@ ScpObject *  ScpExpressionAnalyser::ParseWhileDefine(const char * ScriptFile, VT
 			{
 				if (engine->GetCurrentObjectSpace()->ObjectSpaceType == Space_Global)
 				{
-					engine->bytecode.bytecodemem->AppendByteCode(&stream);
+					engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 				}
 				else
 				{
@@ -2908,9 +2914,10 @@ ScpObject *  ScpExpressionAnalyser::ParseIfDefine(const char * ScriptFile, VTSTR
 {
 	ScpObject *  obj = NULL;
 	std::string & wcommandline = ScriptBody.at(currentcommandline);
-	if (engine->debugger && doimmediately)
+	IScriptDebugger* debugger = engine->getDebugger();
+	if (debugger && doimmediately)
 	{
-		engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+		debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 	}
 	ULONG value;
 	VTPARAMETERS vtparameters;
@@ -2938,9 +2945,9 @@ ScpObject *  ScpExpressionAnalyser::ParseIfDefine(const char * ScriptFile, VTSTR
 			break;
 		}
 		std::string & wcommandline = ScriptBody.at(currentcommandline);
-		if (engine->debugger && doimmediately)
+		if (debugger && doimmediately)
 		{
-			engine->debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
+			debugger->CheckDebugEvent(ScriptFile, currentcommandline, INFINITE);
 		}
 		ULONG value;
 		VTPARAMETERS vtparameters;
@@ -2994,7 +3001,7 @@ ScpObject *  ScpExpressionAnalyser::ParseIfDefine(const char * ScriptFile, VTSTR
 				if (ifstmtobj->falseblock)
 					ifstmtobj->falseblock->GenByteCode(engine, ifstmtobj->falseblock_bytecodemem);
 
-				engine->bytecode.GenByteCodeIfstatement(ifstmtobj->condition_bytecodemem,
+				engine->getScriptByteCode().GenByteCodeIfstatement(ifstmtobj->condition_bytecodemem,
 					ifstmtobj->trueblock_bytecodemem,
 					ifstmtobj->falseblock_bytecodemem,
 					stream);
@@ -3013,7 +3020,7 @@ ScpObject *  ScpExpressionAnalyser::ParseIfDefine(const char * ScriptFile, VTSTR
 			{
 				if (engine->GetCurrentObjectSpace()->ObjectSpaceType == Space_Global)
 				{
-					engine->bytecode.bytecodemem->AppendByteCode(&stream);
+					engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 				}
 				else
 				{

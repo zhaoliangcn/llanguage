@@ -16,7 +16,7 @@ class ScpClassObject :
 	public ScpObject
 {
 public:
-	friend class CScriptEngine;
+
 	ScpClassObject(void);
 	~ScpClassObject(void);
 

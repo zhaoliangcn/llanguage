@@ -33,7 +33,7 @@ int ScpWhileStatementObject::ReComputeConditionResult()
 		}
 		else
 		{
-			ScpExpressionTreeNode  *ConditionExpressionroot= engine->ana.BuildExpressionTreeEx(ConditionExpression);
+			ScpExpressionTreeNode  *ConditionExpressionroot= engine->getExpressionAnalyser().BuildExpressionTreeEx(ConditionExpression);
 			if(ConditionExpressionroot)
 			{
 				ScpObject * retobj=NULL;
@@ -58,25 +58,25 @@ bool ScpWhileStatementObject::MakeConditionByteCode()
 {
 	std::string name = "tempwhile";
 	ULONG idwhile;
-	idwhile = engine->bytecode.resourcepool->scpFindResource(name);
+	idwhile = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 	while (idwhile != -1)
 	{
 		name += "0";
-		idwhile = engine->bytecode.resourcepool->scpFindResource(name);
+		idwhile = engine->getScriptByteCode().resourcepool->scpFindResource(name);
 	}
 	if (idwhile == -1)
 	{
-		idwhile = engine->bytecode.resourcepool->AppendResource(name);
+		idwhile = engine->getScriptByteCode().resourcepool->AppendResource(name);
 		ByteCodeMemoryStream stream;
-		engine->bytecode.GetByteCodeInitRes(name, stream, idwhile);
-		engine->bytecode.bytecodemem->AppendByteCode(&stream);
+		engine->getScriptByteCode().GetByteCodeInitRes(name, stream, idwhile);
+		engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 		stream.Release();
 
 		VTPARAMETERS param;
 		param.push_back("int");
 		param.push_back(name);
-		engine->bytecode.GenByteCodeObjectDefine(ObjInt, param, stream);
-		engine->bytecode.bytecodemem->AppendByteCode(&stream);
+		engine->getScriptByteCode().GenByteCodeObjectDefine(ObjInt, param, stream);
+		engine->getScriptByteCode().bytecodemem->AppendByteCode(&stream);
 		stream.Release();
 	}
 	if (!ConditionExpression.empty())
@@ -85,7 +85,7 @@ bool ScpWhileStatementObject::MakeConditionByteCode()
 		{
 			ConditionResult = 1;
 			ByteCodeMemoryStream stream;
-			engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, residone, stream);
+			engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, residone, stream);
 			condition_bytecodemem.AppendByteCode(&stream);
 			stream.Release();
 		}
@@ -101,14 +101,14 @@ bool ScpWhileStatementObject::MakeConditionByteCode()
 				else if (ConditionResult == 0)
 					resid = residzero;
 				ByteCodeMemoryStream stream;
-				engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, resid, stream);
+				engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, resid, stream);
 				condition_bytecodemem.AppendByteCode(&stream);
 				stream.Release();
 			}
 			else
 			{
 				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();					
-				ScpExpressionTreeNode *	ConditionExpressionroot = engine->ana.BuildExpressionTreeEx(ConditionExpression);
+				ScpExpressionTreeNode *	ConditionExpressionroot = engine->getExpressionAnalyser().BuildExpressionTreeEx(ConditionExpression);
 				if (ConditionExpressionroot)
 				{
 					ByteCodeMemoryStream stream;
@@ -116,8 +116,8 @@ bool ScpWhileStatementObject::MakeConditionByteCode()
 					condition_bytecodemem.AppendByteCode(&stream);
 					stream.Release();
 					name = engine->GetCurrentObjectSpace()->GetObjectNameR(retobj);
-					ULONG idret = engine->bytecode.resourcepool->scpFindResource(name);
-					engine->bytecode.GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, idret, stream);
+					ULONG idret = engine->getScriptByteCode().resourcepool->scpFindResource(name);
+					engine->getScriptByteCode().GetByteCodeBinaryOp(scpOperationAssign, -1, idwhile, idret, stream);
 					condition_bytecodemem.AppendByteCode(&stream);
 					stream.Release();
 

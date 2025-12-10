@@ -209,7 +209,7 @@ int ScpByteCode::Do()
 		{
 			currenttime->name = timename;
 			currenttime->value = currenttime->GetNow();
-			engine->bytecode.resourcepool->setMappedObject(residcurrenttime, currenttime);
+			engine->getScriptByteCode().resourcepool->setMappedObject(residcurrenttime, currenttime);
 			engine->GetCurrentObjectSpace()->AddObject(timename, currenttime);
 		}
 	}
@@ -1383,8 +1383,8 @@ unsigned char * ScpByteCode::DoEnd(unsigned char * pByteCode)
 			{
 				ScpWhileStatementObject * whileobj = (ScpWhileStatementObject *)currentObjectSpace->belongto;
 				engine->SetCurrentObjectSpace(whileobj->WhileStatementObjectSpace.parentspace);
-
-				engine->currentObjectSpace->EraseObject(whileobj->Name);
+				ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+				currentObjectSpace->EraseObject(whileobj->Name);
 			}
 			else
 			{
@@ -1403,7 +1403,8 @@ unsigned char * ScpByteCode::DoEnd(unsigned char * pByteCode)
 		if (ifstmtobj->GetType() == ObjIfStatement)
 		{
 			engine->SetCurrentObjectSpace(ifstmtobj->IfStatementObjectSpace.parentspace);
-			engine->currentObjectSpace->EraseObject(ifstmtobj->Name);
+			ScpObjectSpace * currentObjectSpace = engine->GetCurrentObjectSpace();
+			currentObjectSpace->EraseObject(ifstmtobj->Name);
 		}
 	}
 	else if (currentObjectSpace->ObjectSpaceType == Space_Struct)

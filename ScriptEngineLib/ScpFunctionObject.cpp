@@ -195,7 +195,7 @@ int ScpFunctionObject::BindParameters(CScriptEngine *engine)
 						{
 							std::string Expression = RealParameters.at(i);
 							ScpObjectSpace* currentObjectSpace = objectSpace;
-							ScpExpressionTreeNode* root = engine->ana.BuildExpressionTreeEx(Expression);
+							ScpExpressionTreeNode* root = engine->getExpressionAnalyser().BuildExpressionTreeEx(Expression);
 							if (root)
 							{
 								tempobj = root->CalculateEx(engine);

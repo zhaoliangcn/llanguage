@@ -17,7 +17,7 @@ class ScpFunctionObject:public ScpObject
 {
 public:
 
-	friend class CScriptEngine;
+
 
 	ScpFunctionObject();
 	~ScpFunctionObject();
